@@ -38,11 +38,7 @@ export default class AttachmentsController {
 
 		const result = (await Mediator.instance.sendCommand(command)) as Attachment;
 		
-		const dto = new AttachmentDto();
-		dto.id = result.id;
-		dto.filename = result.filename;
-		dto.type = result.type;
-		dto.url = getAttachmentUrl(result);
+		const dto = new AttachmentDto(result);
 
 		return dto;
 	}

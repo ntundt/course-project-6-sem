@@ -58,6 +58,9 @@ export class User {
 	@ManyToMany(() => Chat, groupChat => groupChat.members)
 	groupChats: Chat[];
 
+	@OneToMany(() => Report, report => report.user)
+	reports: Report[];
+
 }
 
 export function getPasswordHash(password: string, salt: string): string {
@@ -66,4 +69,8 @@ export function getPasswordHash(password: string, salt: string): string {
 
 export function generateSalt(): string {
 	return crypto.randomBytes(16).toString('hex');
+}
+
+export function userIsBlocked(user: User): boolean {
+	return user.blockedTo && user.blockedTo > new Date();
 }

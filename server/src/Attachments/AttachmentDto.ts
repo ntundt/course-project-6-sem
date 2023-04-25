@@ -1,3 +1,5 @@
+import { Attachment, getAttachmentUrl } from './Attachment';
+
 export default class AttachmentDto {
 	// uuid
 	public id: string;
@@ -9,4 +11,11 @@ export default class AttachmentDto {
 
 	// url to download
 	public url: string;
+
+	constructor(attachment: Attachment) {
+		this.id = attachment.id;
+		this.filename = attachment.filename;
+		this.type = attachment.type;
+		this.url = getAttachmentUrl(attachment);
+	}
 }

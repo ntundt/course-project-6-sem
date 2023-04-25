@@ -11,6 +11,9 @@ import { EditMessageCommandHandler } from '../Messages/Commands/EditMessageComma
 import { CreateAttachmentCommandHandler } from '../Attachments/Commands/CreateAttachment';
 import { EditUserCommandHandler } from '../User/Commands/EditUserCommand';
 import { CreateUserCommandHandler } from '../User/Commands/CreateUserCommand';
+import { CreateReportCommandHandler } from '../Reports/Commands/CreateReportCommand';
+import { ProcessReportCommandHandler } from '../Reports/Commands/ProcessReportCommand';
+import { GetReportsListCommandHandler } from '../Reports/Commands/GetReportsListCommand';
 
 export default class Mediator {
 	private static _instance: Mediator;
@@ -43,6 +46,9 @@ export default class Mediator {
 		this._commandHandlers.set('CreateAttachmentCommand', new CreateAttachmentCommandHandler(entityManager));
 		this._commandHandlers.set('EditUserCommand', new EditUserCommandHandler(entityManager));
 		this._commandHandlers.set('CreateUserCommand', new CreateUserCommandHandler(entityManager));
+		this._commandHandlers.set('CreateReportCommand', new CreateReportCommandHandler(entityManager));
+		this._commandHandlers.set('ProcessReportCommand', new ProcessReportCommandHandler(entityManager));
+		this._commandHandlers.set('GetReportsListCommand', new GetReportsListCommandHandler(entityManager));
 	}
 
 	public registerHandler(handler: CommandHandlerBase<any, any>) {
