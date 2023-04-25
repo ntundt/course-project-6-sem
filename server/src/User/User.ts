@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToOne, OneToOne, ManyToMany, CreateDateColumn, UpdateDateColumn, JoinTable, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToOne, OneToOne, ManyToMany, CreateDateColumn, UpdateDateColumn, JoinTable, JoinColumn, OneToMany } from 'typeorm';
 import { Chat } from '../Chats/Chat';
 import * as crypto from 'crypto';
+import { Report } from '../Reports/Report';
 
 @Entity()
 export class User {
@@ -17,8 +18,11 @@ export class User {
 	@Column({ nullable: true, length: 64 })
 	profilePicUrl: string;
 
-	@Column()
+	@Column({ nullable: true, length: 64 })
 	email: string;
+
+	@Column({ default: false })
+	emailVerified: boolean;
 
 	@Column({ length: 64 })
 	passwordHash: string;
