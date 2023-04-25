@@ -16,6 +16,8 @@ import Mediator from './Common/CommandMediator';
 import * as config from './config.json';
 import AttachmentsController from './Attachments/AttachmentsController';
 import UsersController from './User/UsersController';
+import { Report } from './Reports/Report';
+import ReportsController from './Reports/ReportsController';
 
 const data = new DataSource({
 	type: 'mysql',
@@ -25,7 +27,8 @@ const data = new DataSource({
 		Chat,
 		Message,
 		Attachment,
-	]
+		Report,
+	],
 });
 
 
@@ -36,11 +39,15 @@ const app: express.Application = createExpressServer({
 		AuthController,
 		AttachmentsController,
 		UsersController,
+		ReportsController,
 	],
 	authorizationChecker: (action: Action, roles: string[]) => new Promise<boolean>((resolve, reject) => {
 		passport.authenticate('jwt', (err, user) => {
 			if (err) {
 				return reject(err);
+			}
+			if (roles.indexOf('admin') !== -1 && !user.isModerator) {
+				return resolve(false);
 			}
 			if (!user) {
 				return resolve(false);
@@ -57,38 +64,6 @@ passport.use(Strategy);
 (async function main() {
 	await data.initialize();
 	Mediator.instance.setEntityManager(data.createEntityManager());
-	/*await data.getRepository(User).query(`
-		drop trigger if exists user_add_destination;
-		delimiter //
-		create trigger user_add_destination
-			after insert on user
-			for each row
-		begin
-			insert into message_destination 
-				(id, object_id, object_type) values (default, new.id, 'user');
-		end//
-		delimiter ;
-	`)*/
-	let user = new User;
-	user.name = 'test';
-	user.email = 'nikita.tihonovich@gmail.com';
-	user.salt = crypto.randomBytes(16).toString('hex');
-	user.passwordHash = crypto.createHash('sha256').update('test' + user.salt).digest('hex');
-	user.profilePicUrl = 'https://0.gravatar.com/avatar/0696f5e328e7d57002ab70778467e942';
-	
-	
-	let groupChat = new Chat;
-	groupChat.creator = user;
-	groupChat.members = [user];
-	
-	//await data.getRepository(GroupChat).save(groupChat);
-
-	let message = new Message;
-	message.text = 'test';
-	message.sender = user;
-	message.destinationChatId = groupChat.id;
-	
-	groupChat.messages = [message];
 })();
 
 console.log('Server started');
