@@ -1,0 +1,85 @@
+.ChatEntry {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+	padding: 15px;
+	width: 100%;
+	overflow-x: unset;
+	cursor: pointer;
+}
+
+.ChatEntry-image-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.ChatEntry-image {
+	width: 54px;
+	height: 54px;
+	border-radius: 50%;
+}
+
+.ChatEntry-message-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	margin-left: 0.5rem;
+	width: auto;
+	height: 100%;
+	flex-grow: 1;
+	max-width: calc(100% - 54px - 0.5rem);
+}
+
+.ChatEntry-name-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: flex-start;
+	width: 100%;
+}
+
+/* cut text with ... if overflow */
+.ChatEntry-name {
+	font-size: 16px;
+	color: #333;
+	font-weight: bold;
+}
+.active .ChatEntry-name {
+	color: #eee;
+}
+
+.ChatEntry-time {
+	font-size: 12px;
+	color: #999;
+	margin-left: 0.5rem;
+	min-width: fit-content;
+}
+.active .ChatEntry-time {
+	color: #eee;
+}
+
+.ChatEntry-message {
+	font-size: 16px;
+	color: #333;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+.active .ChatEntry-message {
+	color: #eee;
+}
+
+.ChatEntry-name, .ChatEntry-time, .ChatEntry-message {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.ChatEntry-selected {
+	background-color: #eee;
+}

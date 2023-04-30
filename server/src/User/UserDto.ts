@@ -5,7 +5,7 @@ export default class UserDto {
 	public email: string;
 	public name: string;
 	public username: string;
-	public profilePicUrl: string;
+	public avatar: string;
 	public createdAt: Date;
 	public updatedAt: Date;
 	public blockedTo: Date;
@@ -17,7 +17,7 @@ export default class UserDto {
 		this.email = user.email;
 		this.name = user.name;
 		this.username = user.username;
-		this.profilePicUrl = user.profilePicUrl;
+		this.avatar = user.profilePicUrl;
 		this.createdAt = user.createdAt;
 		this.updatedAt = user.updatedAt;
 		this.blockedTo = user.blockedTo;

@@ -1,4 +1,4 @@
-import { Authorized, Controller, CurrentUser, HttpError, Post, UploadedFile } from 'routing-controllers';
+import { Authorized, Controller, CurrentUser, HttpError, Post, UploadedFile, UseBefore } from 'routing-controllers';
 import Mediator from '../Common/CommandMediator';
 import { CreateAttachmentCommand } from './Commands/CreateAttachment';
 import { Attachment, getAttachmentUrl } from './Attachment';
@@ -6,6 +6,7 @@ import multer from 'multer';
 import AttachmentChecker from './AttachmentChecker';
 import AttachmentDto from './AttachmentDto';
 import TokenPayload from '../Auth/TokenPayload';
+import enableCors from '../Common/CorsEnabler';
 
 @Controller()
 export default class AttachmentsController {
@@ -17,6 +18,7 @@ export default class AttachmentsController {
 		storage: multer.memoryStorage(),
 	};
 	
+	@UseBefore(enableCors)
 	@Authorized()
 	@Post('/api/attachments')
 	public async createAttachment(
@@ -24,7 +26,7 @@ export default class AttachmentsController {
 			options: AttachmentsController.fileUploadOptions,
 			required: true 
 		}) file: Express.Multer.File,
-		@CurrentUser({ required: true }) user: TokenPayload,
+		@CurrentUser() user: TokenPayload,
 	) {
 		if (!AttachmentChecker.checkAttachmentAllowed(file)) {
 			throw new HttpError(422, 'Unprocessable entity');

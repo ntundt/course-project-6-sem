@@ -1,0 +1,13 @@
+.FontAwesomeIconAsAvatar {
+	color: #fff;
+	background-color: #000;
+	border-radius: 50%;
+	line-height: normal;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.FontAwesomeIconAsAvatar > svg {
+	margin: 0 auto;
+	vertical-align: middle;
+}

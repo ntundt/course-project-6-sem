@@ -24,7 +24,6 @@ export class CreateChatCommandHandler extends CommandHandlerBase<CreateChatComma
 			});
 			
 			if (users.length != command.userIds.length) {
-				console.log('Some users not found');
 				throw new UserNotFoundError(command.userIds.filter(userId => !users.some(user => user.id === userId))[0]);
 			}
 

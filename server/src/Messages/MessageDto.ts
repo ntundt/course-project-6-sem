@@ -8,13 +8,15 @@ export default class MessageDto {
 	public text: string;
 	public attachments: AttachmentDto[];
 	public date: Date;
+	public read: boolean;
 
 	constructor(message: Message) {
 		this.id = message.id;
 		this.senderId = message.senderId;
 		this.chatId = message.destinationChatId;
 		this.text = message.text;
-		this.attachments = message.attachments.map(attachment => new AttachmentDto(attachment));
+		this.attachments = message.attachments?.map(attachment => new AttachmentDto(attachment));
 		this.date = message.createdAt;
+		this.read = message.read;
 	}
 }

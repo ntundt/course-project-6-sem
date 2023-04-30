@@ -1,3 +1,6 @@
+import MessageDto from '../Messages/MessageDto';
+import { Chat } from './Chat';
+
 export class LastMessageAttachmentDto {
 	public id: string;
 	public type: string;
@@ -17,6 +20,19 @@ export class ChatDto {
 	public type: string;
 	public name: string;
 	public avatar: string;
-	public lastMessage?: LastMessageDto;
+	public createdAt: Date;
+	public messages: MessageDto[];
+	public membersCount?: number;
 	public unreadMessagesCount?: number;
+
+	public constructor(chat: Chat) {
+		this.id = chat.id;
+		this.type = chat.isPrivate ? 'private' : 'group';
+		this.name = chat.name;
+		this.avatar = chat.avatar;
+		this.createdAt = chat.createdAt;
+		this.messages = chat.messages.map(message => new MessageDto(message));
+		this.membersCount = chat.members.length;
+	}
+
 }

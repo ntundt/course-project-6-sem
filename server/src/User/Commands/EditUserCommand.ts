@@ -9,7 +9,7 @@ export class EditUserCommand {
 	public email?: string;
 	public name?: string;
 	public username?: string;
-	public profilePicUrl?: string;
+	public avatar?: string;
 	public password?: string;
 }
 
@@ -41,8 +41,8 @@ export class EditUserCommandHandler extends CommandHandlerBase<EditUserCommand, 
 			user.username = command.username;
 		}
 
-		if (command.profilePicUrl) {
-			user.profilePicUrl = command.profilePicUrl;
+		if (command.avatar) {
+			user.profilePicUrl = command.avatar;
 		}
 
 		if (command.password) {

@@ -35,8 +35,6 @@ export default class AttachmentChecker {
 		const magicNumberAllowed = Object.values(AttachmentChecker.magicNumbers)
 			.some((magicNumber) => AttachmentChecker.checkMagicNumber(fileBuffer, magicNumber));
 
-		console.log(extensionAllowed, magicNumberAllowed);
-
 		return extensionAllowed && magicNumberAllowed;
 	}
 

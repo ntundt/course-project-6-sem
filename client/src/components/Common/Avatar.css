@@ -1,0 +1,11 @@
+.Avatar-image-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.Avatar-image {
+	border-radius: 50%;
+	object-fit: cover;
+}

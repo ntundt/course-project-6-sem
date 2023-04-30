@@ -46,36 +46,7 @@ export class GetChatListCommandHandler extends CommandHandlerBase<GetChatListCom
 			.orderBy("message.createdAt", "DESC")
 			.getMany();
 
-		console.log(chats);
-
-		return chats.map(chat => {
-			return {
-				id: chat.id,
-				name: chat.name,
-				type: chat.isPrivate ? "private" : "group",
-				avatar: chat.avatar,
-				creator: {
-					id: chat.creator.id,
-					name: chat.creator.name,
-					avatarUrl: chat.creator.profilePicUrl
-				},
-				members: chat.members.map(member => ({
-					id: member.id,
-					name: member.name,
-					avatarUrl: member.profilePicUrl
-				})),
-				messages: chat.messages.map(message => ({
-					id: message.id,
-					text: message.text,
-					createdAt: message.createdAt,
-					sender: {
-						id: message.sender.id,
-						name: message.sender.name,
-						avatarUrl: message.sender.profilePicUrl
-					}
-				}))
-			}
-		});
+		return chats.map(chat => new ChatDto(chat));
 	}
 }
 

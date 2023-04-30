@@ -29,6 +29,9 @@ export class Message /* implements PolymorphicChildInterface */ {
 	@Column({ length: 4096 })
 	text: string;
 
+	@Column({ default: false })
+	read: boolean;
+
 	@OneToMany(() => Attachment, attachment => attachment.message)
 	attachments: Attachment[];
 
