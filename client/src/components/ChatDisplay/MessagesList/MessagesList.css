@@ -11,3 +11,8 @@
 	min-height: min-content;
 	min-height: 100%;
 }
+
+.MessagesList-dummy-div {
+	height: 0.5rem;
+	width: 100%;
+}

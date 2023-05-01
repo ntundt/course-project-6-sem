@@ -56,7 +56,7 @@ export default function MessagesList(props: any) {
 						);
 					})
 				}
-				<div ref={dummyDivRef} />
+				<div ref={dummyDivRef} className='MessagesList-dummy-div'/>
 			</div>
 		</div>
 	);
