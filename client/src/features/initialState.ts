@@ -21,6 +21,18 @@ const initialState: any = {
 		loading: false,
 		error: null,
 	},
+	reports: {
+		reports: [],
+		modal: {
+			show: false,
+			messageId: null,
+			chatId: null,
+			userId: null,
+			reason: '',
+		},
+		loading: false,
+		error: null,
+	},
 }
 
 export default initialState;

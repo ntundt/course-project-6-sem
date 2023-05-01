@@ -128,7 +128,15 @@ const uploadAttachments = (chatId: number, files: File[]) => {
 				type: 'chatsList/attachmentsUpload/pending',
 				payload: {
 					chatId,
-					files: filesMapped,
+					files: filesMapped.map(file => ({
+						fileId: file.fileId,
+						file: {
+							name: file.file.name,
+							size: file.file.size,
+							type: file.file.type,
+						},
+						attachment: null,
+					})),
 				}
 			});
 			for (const file of filesMapped) {
@@ -163,6 +171,26 @@ const uploadAttachments = (chatId: number, files: File[]) => {
 	}
 }
 
+const reportMessage = (chatId: number, messageId: number, reason: string) => {
+	return async (dispatch: any, getState: any) => {
+		try {
+			const response = await axios.post(`/chats/${chatId}/messages/${messageId}/report`);
+			dispatch({
+				type: 'chatsList/messageReport/fulfilled',
+				payload: {
+					chatId,
+					messageId,
+				},
+			});
+		} catch (error) {
+			dispatch({
+				type: 'chatsList/messageReport/rejected',
+				payload: error,
+			});
+		}
+	}
+}
+
 export {
 	axios,
 	fetchUserById,
@@ -171,4 +199,5 @@ export {
 	sendMessage,
 	setMessageRead,
 	uploadAttachments,
+	reportMessage,
 };

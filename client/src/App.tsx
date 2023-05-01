@@ -9,6 +9,7 @@ import io, { Socket } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from './features/store';
 import { fetchToken } from './features/authSlice';
+import ReportMessageModal from './components/Modals/ReportMessageModal/ReportMessageModal';
 
 function App() {
 	const dispatch = useDispatch<AppDispatch>();
@@ -43,12 +44,15 @@ function App() {
 	}, [dispatch]);*/
 
 	return (
-		<div className="App container-fluid hm-100">
-			<div className="row w-100 hm-100">
-				<ChatList />
-				<ChatDisplay />
+		<>
+			<div className="App container-fluid hm-100">
+				<div className="row w-100 hm-100">
+					<ChatList />
+					<ChatDisplay />
+				</div>
 			</div>
-		</div>
+			<ReportMessageModal />
+		</>
 	);
 }
 

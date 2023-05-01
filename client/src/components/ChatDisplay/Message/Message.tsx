@@ -13,37 +13,105 @@ import classes from '../../Common/classesString';
 import TimeDisplay from '../../TimeDipsplay/TimeDisplay';
 import DeliveryStatusIcon from './DeliveryStatusIcon/DeliveryStatusIcon';
 import useOnScreen from '../../Common/useOnScreen';
+import ContextMenu from '../../Common/ContextMenu';
 
 export default function Message(props: any) {
 	const dispatch = useDispatch<AppDispatch>();
 	const messageRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		dispatch(fetchUserById(props.message.senderId));
-	}, [props.message.senderId]);
+		dispatch(fetchUserById(props.message?.senderId));
+	}, [props.message?.senderId]);
 
-	const sender = useSelector((state: any) => state.users.users.find((user: any) => user.id === props.message.senderId));
+	const sender = useSelector((state: any) => state.users.users.find((user: any) => user.id === props.message?.senderId));
 	const userId = useSelector((state: any) => state.auth.userId);
 
 	const message = props.message;
 	const isOwnMessage = userId === sender?.id;
-	const attachments = message.attachments;
-	const text = message.text;
+	const attachments = message?.attachments;
+	const text = message?.text;
 
 	const avatarUrl = getAvatarUrl(sender);
 
 	const onScreen = useOnScreen(messageRef);
 	useEffect(() => {
-		if (onScreen && !message.read && !isOwnMessage) {
-			dispatch(setMessageRead(message.chatId, message.id));
+		if (onScreen && !message?.read && !isOwnMessage) {
+			dispatch(setMessageRead(message?.chatId, message?.id));
 		}
 	}, [onScreen]);
 
+	const [showContextMenu, setShowContextMenu] 
+		= useState<{ show: boolean, top: number, left: number }>({ show: false, top: 0, left: 0 });
+	const onMessageContextMenu = (e: any) => {
+		if (props.disableInteraction) return;
+
+		e.preventDefault();
+
+		const contextMenuHidingEvents = [
+			'click',
+			'contextmenu',
+			'wheel',
+			'scroll',
+		];
+
+		const hideContextMenu = () => {
+			setShowContextMenu({ show: false, top: 0, left: 0 });
+			contextMenuHidingEvents.forEach((event) => {
+				document.removeEventListener(event, hideContextMenu);
+			});
+		};
+
+		contextMenuHidingEvents.forEach((event) => {
+			// ignore the event that triggered current context menu
+			
+			document.addEventListener(event, (event) => {
+				if (event.type === 'contextmenu') {
+					if (event.target === e.target) {
+						return;
+					}
+				}
+				hideContextMenu();
+			});
+		});
+		
+		setShowContextMenu({ show: true, top: e.clientY, left: e.clientX });
+	};
+
+	const contextMenuItems = [
+		{ text: 'Copy', onClick: () => { navigator.clipboard.writeText(text); } },
+	];
+	if (!isOwnMessage) {
+		contextMenuItems.push({
+			text: 'Report',
+			onClick: () => {
+				dispatch({
+					type: 'reports/showModal',
+					payload: {
+						messageId: message.id,
+						chatId: message.chatId,
+						userId: message.senderId,
+					}
+				});
+			}
+		});
+	}
+
 	return (
-		<div ref={messageRef} className={classes({
-			'Message-container': true,
-			'Message-container-own': isOwnMessage,
-		})}>
+		<div 
+			ref={messageRef} 
+			onContextMenu={onMessageContextMenu}
+			className={classes({
+				'Message-container': true,
+				'Message-container-own': isOwnMessage,
+			})}
+		>
+
+			<ContextMenu
+				show={showContextMenu.show}
+				top={showContextMenu.top}
+				left={showContextMenu.left}
+				items={contextMenuItems}
+			/>
 
 			{ !isOwnMessage &&
 				<Avatar
@@ -93,8 +161,8 @@ export default function Message(props: any) {
 						})}
 				</div>
 				<div className='Message-time-and-read-status-container'>
-					{isOwnMessage && <DeliveryStatusIcon style={{userSelect: 'none', color: isOwnMessage ? 'lightgray' : 'gray'}} read={message.read} />}
-					<TimeDisplay style={{userSelect: 'none', color: isOwnMessage ? 'lightgray' : 'gray'}} time={message.date} format={'HH:mm'} />
+					{isOwnMessage && <DeliveryStatusIcon style={{userSelect: 'none', color: isOwnMessage ? 'lightgray' : 'gray'}} read={message?.read} />}
+					<TimeDisplay style={{userSelect: 'none', color: isOwnMessage ? 'lightgray' : 'gray'}} time={message?.date} format={'HH:mm'} />
 				</div>
 			</div>
 		</div>

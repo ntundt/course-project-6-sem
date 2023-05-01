@@ -4,12 +4,14 @@ import { Report } from '../Report';
 import { User, userIsBlocked } from '../../User/User';
 import ReportDto from '../ReportDto';
 import { HttpError } from 'routing-controllers';
+import { Message } from '../../Messages/Message';
 
 export class CreateReportCommand {
 	public authorId: number;
+	public chatId: number;
+	public messageId?: number;
 	public userId: number;
 	public reason: string;
-	public messageId?: number;
 }
 
 export class CreateReportCommandHandler extends CommandHandlerBase<CreateReportCommand, ReportDto> {
@@ -31,8 +33,9 @@ export class CreateReportCommandHandler extends CommandHandlerBase<CreateReportC
 		}
 
 		if (command.messageId) {
- 			const message = await this._entityManager.findOneBy(Report, {
-				id: command.messageId
+ 			const message = await this._entityManager.findOneBy(Message, {
+				id: command.messageId,
+				destinationChatId: command.chatId,
 			});
 			if (!message) {
 				throw new HttpError(404, 'Message not found');
