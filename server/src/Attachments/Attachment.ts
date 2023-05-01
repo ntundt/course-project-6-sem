@@ -35,6 +35,12 @@ export class Attachment {
 	@Column({ length: 255 })
 	filename: string;
 
+	@Column({ default: 1 })
+	width: number;
+
+	@Column({ default: 1 })
+	height: number;
+
 	@Column({ enum: AttachmentType, type: 'enum', default: AttachmentType.Document })
 	type: AttachmentType;
 

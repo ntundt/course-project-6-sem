@@ -12,10 +12,18 @@ export default class AttachmentDto {
 	// url to download
 	public url: string;
 
+	public width?: number;
+
+	public height?: number;
+
 	constructor(attachment: Attachment) {
+		console.log('ATTACHMENT', attachment);
+
 		this.id = attachment.id;
 		this.filename = attachment.filename;
 		this.type = attachment.type;
 		this.url = getAttachmentUrl(attachment);
+		this.width = attachment.width;
+		this.height = attachment.height;
 	}
 }

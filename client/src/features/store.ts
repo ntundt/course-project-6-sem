@@ -33,7 +33,15 @@ export const store = configureStore({
 		auth: authReducer,
 		chatDisplay: chatDisplaySlice.reducer,
 		users: usersReducer,
-	}) 
+	}),
+	middleware: getDefaultMiddleware => getDefaultMiddleware({
+		serializableCheck: false,/*{
+			ignoredActions: [
+				'chatsList/attachmentsUpload/fulfilledSingle',
+				'chatsList/attachmentsUpload/pending'
+			],
+		}*/
+	}),
 });
 export type AppDispatch = typeof store.dispatch;
 

@@ -43,8 +43,17 @@ export class GetChatListCommandHandler extends CommandHandlerBase<GetChatListCom
 				return "exists " + subQuerySelect;
 			})
 			.leftJoinAndSelect("message.sender", "sender")
+			.leftJoinAndSelect("message.attachments", "attachments")
 			.orderBy("message.createdAt", "DESC")
 			.getMany();
+
+		chats.forEach(chat => {
+			if (!chat.isPrivate) return;
+
+			const otherMember = chat.members.find(member => member.id !== command.userId);
+			chat.name = otherMember.name;
+			chat.avatar = otherMember.profilePicUrl;
+		});
 
 		return chats.map(chat => new ChatDto(chat));
 	}

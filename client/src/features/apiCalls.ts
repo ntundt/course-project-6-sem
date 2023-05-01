@@ -83,7 +83,7 @@ const sendMessage = (chatId: number, message: {
 		try {
 			const response = await axios.post(`/chats/${chatId}/messages`, {
 				text: message.text,
-				attachments: message.attachments,
+				attachmentIds: message.attachments,
 			});
 			dispatch({
 				type: 'chatsList/messageSend/fulfilled',
@@ -114,6 +114,55 @@ const setMessageRead = (chatId: number, messageId: number) => {
 	}
 }
 
+const uploadAttachments = (chatId: number, files: File[]) => {
+	return async (dispatch: any, getState: any) => {
+		try {
+			const filesMapped = files.map(file => {
+				return {
+					fileId: Math.random(),
+					file,
+					attachment: null,
+				}
+			})
+			dispatch({
+				type: 'chatsList/attachmentsUpload/pending',
+				payload: {
+					chatId,
+					files: filesMapped,
+				}
+			});
+			for (const file of filesMapped) {
+				const formData = new FormData();
+				formData.append('file', file.file);
+				const response = await axios.post(`/attachments`, formData, {
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				});
+				dispatch({
+					type: 'chatsList/attachmentsUpload/fulfilledSingle',
+					payload: {
+						chatId,
+						fileId: file.fileId,
+						attachment: response.data,
+					}
+				});
+			}
+			dispatch({
+				chatId,
+				type: 'chatsList/attachmentsUpload/fulfilled',
+			});
+		} catch (error) {
+			console.log(error);
+			dispatch({
+				chatId,
+				type: 'chatsList/attachmentsUpload/rejected',
+				payload: error,
+			});
+		}
+	}
+}
+
 export {
 	axios,
 	fetchUserById,
@@ -121,4 +170,5 @@ export {
 	fetchMessageHistory,
 	sendMessage,
 	setMessageRead,
+	uploadAttachments,
 };

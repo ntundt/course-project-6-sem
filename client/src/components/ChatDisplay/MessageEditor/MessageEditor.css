@@ -17,6 +17,15 @@
 	align-items: flex-end;
 }
 
+.MessageEditor-attachments-view {
+	padding-bottom: 10px; 
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+	gap: 10px;
+}
+
 .MessageEditor-attachemnt-button-container {
 	display: flex;
 	flex-direction: row;

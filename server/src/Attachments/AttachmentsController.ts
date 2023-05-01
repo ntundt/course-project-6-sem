@@ -28,20 +28,24 @@ export default class AttachmentsController {
 		}) file: Express.Multer.File,
 		@CurrentUser() user: TokenPayload,
 	) {
-		if (!AttachmentChecker.checkAttachmentAllowed(file)) {
+		try {
+			if (!AttachmentChecker.checkAttachmentAllowed(file)) {
+				throw new HttpError(422, 'Unprocessable entity');
+			}
+
+			const command = new CreateAttachmentCommand();
+			command.creatorId = user.userId;
+			command.filename = file.originalname;
+			command.file = file;
+			command.type = AttachmentChecker.getAttachmentType(file);
+
+			const result = (await Mediator.instance.sendCommand(command)) as Attachment;
+			
+			const dto = new AttachmentDto(result);
+
+			return dto;
+		} catch (error) {
 			throw new HttpError(422, 'Unprocessable entity');
 		}
-
-		const command = new CreateAttachmentCommand();
-		command.creatorId = user.userId;
-		command.filename = file.originalname;
-		command.file = file;
-		command.type = AttachmentChecker.getAttachmentType(file);
-
-		const result = (await Mediator.instance.sendCommand(command)) as Attachment;
-		
-		const dto = new AttachmentDto(result);
-
-		return dto;
 	}
 }

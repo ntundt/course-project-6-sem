@@ -1,6 +1,7 @@
 import './Message.css';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { PhotoAlbum } from 'react-photo-album';
 
 import config from '../../../config.json';
 import Avatar, { getAvatarUrl } from '../../Common/Avatar';
@@ -37,7 +38,6 @@ export default function Message(props: any) {
 			dispatch(setMessageRead(message.chatId, message.id));
 		}
 	}, [onScreen]);
-			
 
 	return (
 		<div ref={messageRef} className={classes({
@@ -55,18 +55,31 @@ export default function Message(props: any) {
 			<div className={classes({
 				'Message': true,
 				'Message-own': isOwnMessage,
+				'Message-with-attachments': attachments?.length > 0,
 			})}>
-				<div className='Message-visual-attachments-container'>
-					{attachments?.filter((attachment: any) => attachment.type === 'image' || attachment.type === 'video')
-						.map((attachment: any) => {
-						return (
-							<div className='Message-visual-attachment-container'>
-								{attachment.type === 'image' && <img className='Message-visual-attachment' src={attachment.url} alt='attachment' />}
-								{attachment.type === 'video' && <video className='Message-visual-attachment' src={attachment.url} controls></video>}
-							</div>
-						);
-					})}
-				</div>
+				{attachments?.length > 0 && 
+					<div style={{
+						width: '100%',
+						borderTopLeftRadius: 12,
+						borderTopRightRadius: 12,
+						borderBottomLeftRadius: 6,
+						borderBottomRightRadius: 6,
+						overflow: 'hidden',
+						marginBottom: 5,
+					}}>
+						<PhotoAlbum
+							layout='rows'
+							targetRowHeight={400}
+							spacing={5}
+							padding={0}
+							photos={attachments?.filter((attachment: any) => attachment.type === 'Image' || attachment.type === 'Video')
+								.map((attachment: any) => ({
+									src: attachment.url,
+									width: attachment.width,
+									height: attachment.height,
+								}))} />
+					</div>
+				}
 				<div className='Message-text'>{text}</div>
 				<div className='Message-sound-and-docs-attachments'>
 					{attachments?.filter((attachment: any) => attachment.type === 'audio' || attachment.type === 'document')

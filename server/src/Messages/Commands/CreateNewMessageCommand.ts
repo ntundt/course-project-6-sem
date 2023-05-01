@@ -44,6 +44,13 @@ export class CreateNewMessageCommandHandler extends CommandHandlerBase<CreateNew
 
 		message = await this.messageRepository.save(message);
 
+		message = await this.messageRepository.findOne({
+			where: {
+				id: message.id,
+			},
+			relations: ['attachments'],
+		});
+
 		return new MessageDto(message);
 	}
 }

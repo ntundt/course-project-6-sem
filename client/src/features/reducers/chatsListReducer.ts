@@ -160,6 +160,7 @@ const messageSendFullfilled = (state: any, action: any) => {
 				return {
 					...chat,
 					messageEditorText: '',
+					attachments: [],
 				};
 			}
 			return chat;
@@ -192,6 +193,73 @@ const messageRead = (state: any, action: any) => {
 	return newState;
 }
 
+const attachmentsUploadPending = (state: any, action: any) => {
+	const newState = {
+		...state,
+		chats: state.chats.map((chat: any) => {
+			if (chat.id === action.payload.chatId) {
+				return {
+					...chat,
+					attachments: chat.attachments ? [
+						...chat.attachments,
+						...action.payload.files.map((file: any) => ({
+							...file,
+							loading: true,
+						})),
+					] : action.payload.files.map((file: any) => ({
+						...file,
+						loading: true,
+					})),
+				};
+			}
+			return chat;
+		}),
+	};
+	return newState;
+}
+
+const attachmentsUploadFulfilledSingle = (state: any, action: any) => {
+	const newState = {
+		...state,
+		chats: state.chats.map((chat: any) => {
+			if (chat.id === action.payload.chatId) {
+				return {
+					...chat,
+					attachments: chat.attachments.map((attachment: any) => {
+						if (attachment.fileId === action.payload.fileId) {
+							return {
+								...attachment,
+								attachment: action.payload.attachment,
+								loading: false,
+							};
+						}
+						return attachment;
+					}),
+				}
+			}
+			return chat;
+		})
+	};
+	return newState;
+}
+
+const removeAttachment = (state: any, action: any) => {
+	const newState = {
+		...state,
+		chats: state.chats.map((chat: any) => {
+			if (chat.id === action.payload.chatId) {
+				return {
+					...chat,
+					attachments: chat.attachments.filter((attachment: any) => attachment.fileId !== action.payload.fileId),
+				};
+			}
+			return chat;
+		}),
+	};
+	return newState;
+}
+
+
 export default function chatsListReducer(state = initialState.chatsList, action: any) {
 	const { type } = action;
 	switch (type) {
@@ -223,6 +291,12 @@ export default function chatsListReducer(state = initialState.chatsList, action:
 			return messageSendFullfilled(state, action);
 		case 'chatsList/messageRead':
 			return messageRead(state, action);
+		case 'chatsList/attachmentsUpload/pending':
+			return attachmentsUploadPending(state, action);
+		case 'chatsList/attachmentsUpload/fulfilledSingle':
+			return attachmentsUploadFulfilledSingle(state, action);
+		case 'chatsList/removeAttachment':
+			return removeAttachment(state, action);
 	}
 	return state;
 }
