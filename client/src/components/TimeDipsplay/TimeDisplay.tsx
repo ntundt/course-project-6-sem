@@ -8,9 +8,9 @@ export default function TimeDisplay(props: any) {
 	}
 
 	return (
-		<span {...props} title={moment(props.time).format('LLLL')} className='TimeDisplay'>
-			{!props.format && moment(props.time).local().fromNow()}
-			{props.format && moment(props.time).local().format(props.format)}
+		<span {...props} title={moment.utc(props.time).local().format('LLLL')} className='TimeDisplay'>
+			{!props.format && moment.utc(props.time).local().fromNow()}
+			{props.format && moment.utc(props.time).local().format(props.format)}
 		</span>
 	);
 }

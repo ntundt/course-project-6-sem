@@ -23,9 +23,13 @@ import * as jwt from 'jsonwebtoken';
 import TokenPayload from './Auth/TokenPayload';
 import NotificationService from './Common/NotificationService';
 import { GetUserRoomsCommand, GetUserRoomsCommandResult } from './Common/Commands/GetUserRoomsCommand';
+//utc
+process.env.TZ = 'Europe/Minsk';
+console.log('Timezone used ', process.env.TZ);
 
 const data = new DataSource({
 	type: 'mysql',
+	timezone: 'UTC',
 	...config.typeorm,
 	entities: [
 		User,
