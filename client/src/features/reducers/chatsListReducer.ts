@@ -78,10 +78,12 @@ const fetchChatMessagesFulfilled = (state: any, action: any) => {
 				return {
 					...chat, 
 					loading: false, 
-					messages: [
-						...chat.messages,
-						...action.payload.messages
-					].sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+					messages: [...chat.messages.map((message: any) => {
+						if (action.payload.messages.some((newMessage: any) => newMessage.id === message.id)) {
+							return action.payload.messages.find((newMessage: any) => newMessage.id === message.id);
+						}
+						return message;
+					}), ...action.payload.messages.filter((newMessage: any) => !chat.messages.some((message: any) => message.id === newMessage.id))],
 					allMessagesLoaded: action.payload.messages.length === 0,
 				};
 			}

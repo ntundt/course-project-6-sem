@@ -1,0 +1,6 @@
+.ReportsViewModal-action-buttons {
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 1rem;
+	margin-top: 20px;
+}

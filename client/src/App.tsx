@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from './features/store';
 import { fetchToken } from './features/authSlice';
 import ReportMessageModal from './components/Modals/ReportMessageModal/ReportMessageModal';
+import ReportsViewModal from './components/Modals/ReportsViewModal/ReportsViewModal';
 
 function App() {
 	const dispatch = useDispatch<AppDispatch>();
@@ -52,6 +53,7 @@ function App() {
 				</div>
 			</div>
 			<ReportMessageModal />
+			<ReportsViewModal />
 		</>
 	);
 }

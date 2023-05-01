@@ -41,6 +41,12 @@ export const reportsSlice = createSlice({
 		setModalReason(state, action) {
 			state.modal.reason = action.payload.reason;
 		},
+		showViewModal(state, action) {
+			state.viewModal.show = true;
+		},
+		hideViewModal(state) {
+			state.viewModal.show = false;
+		},
 	},
 	extraReducers: builder => {
 		builder.addCase(submitReport.pending, (state, action) => {
@@ -58,4 +64,10 @@ export const reportsSlice = createSlice({
 	}
 });
 
-export const { showModal, hideModal, setModalReason } = reportsSlice.actions;
+export const {
+	showModal,
+	hideModal,
+	setModalReason,
+	showViewModal,
+	hideViewModal
+} = reportsSlice.actions;

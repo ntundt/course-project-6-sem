@@ -55,6 +55,10 @@ const fetchChatList = () => {
 const fetchMessageHistory = (chatId: number, offset: number, count: number) => {
 	return async (dispatch: any, getState: any) => {
 		try {
+			if (getState().chatsList.chats.find((chat: any) => chat.id === chatId)?.loading) {
+				console.log(' already loading');
+				return;
+			}
 			dispatch({
 				type: 'chatsList/fetchChatMessages/pending',
 			});

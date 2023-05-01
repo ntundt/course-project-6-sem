@@ -1,9 +1,42 @@
 .ChatList {
 	display: flex;
 	flex-direction: column;
-	width: 100%;
-	height: 100%;
-	overflow-y: hidden;
 	padding: 0;
 	margin: 0;
+}
+
+.ChatList-header {
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: center;
+	width: 100%;
+	height: 84px;
+	background-color: #eee;
+	padding: 15px;
+	border-bottom: 1px solid #ccc;
+	gap: 0.5rem;
+}
+
+.ChatList-scrollable {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	overflow-y: auto;
+	width: 100%;
+	height: 100%;
+}
+
+.ChatList-seamless-button {
+	width: 42px;
+	height: 42px;
+	font-size: 20px;
+	align-items: center;
+	/* align font awesome icons to the center */
+	display: flex;
+	justify-content: center;
+	color: #333;
+	background-color: #eee;
+	border-radius: 50%;
+	border: none;
 }

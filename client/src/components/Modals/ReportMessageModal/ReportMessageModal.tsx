@@ -14,14 +14,6 @@ export default function ReportMessageModal(props: any) {
 	const chatId = useSelector((state: any) => state.reports.modal.chatId);
 	const userId = useSelector((state: any) => state.reports.modal.userId);
 
-	console.log({
-		show,
-		reason,
-		messageId,
-		chatId,
-		userId,
-	})
-
 	const onHide = () => {
 		dispatch(hideModal());
 	};

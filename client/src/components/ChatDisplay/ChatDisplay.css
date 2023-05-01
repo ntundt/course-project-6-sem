@@ -15,6 +15,7 @@
 	height: 84px;
 	background-color: #eee;
 	padding: 15px;
+	border-bottom: 1px solid #ccc;
 }
 
 .ChatDisplay-chat-info-container {

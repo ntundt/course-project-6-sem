@@ -17,9 +17,16 @@ export class ProcessReportCommandHandler extends CommandHandlerBase<ProcessRepor
 	}
 
 	public async handle(command: ProcessReportCommand): Promise<ReportDto> {
-		const report = await this._em.findOneBy(Report, {
-			id: command.id
+		console.log(command);
+		
+		const report = await this._em.getRepository(Report).findOne({
+			where: {
+				id: command.id,
+			},
+			relations: ['user'],
 		});
+
+		console.log(report);
 
 		if (!report) {
 			throw new HttpError(404, 'Report not found');
@@ -39,6 +46,7 @@ export class ProcessReportCommandHandler extends CommandHandlerBase<ProcessRepor
 		}
 
 		await this._em.save(report);
+		await this._em.save(report.user);
 
 		return new ReportDto(report);
 	}

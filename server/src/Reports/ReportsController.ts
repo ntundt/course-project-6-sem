@@ -22,12 +22,14 @@ export default class ReportsController {
 	}
 
 	@Authorized([ 'admin' ])
-	@Put('/api/users/:userId/reports/:reportId')
+	@Put('/api/reports/:reportId')
 	public async processReport(
 		@Body() command: ProcessReportCommand,
+		@Param('reportId') reportId: number,
 		@CurrentUser() user: TokenPayload,
 	): Promise<ReportDto> {
 		command.resolverId = user.userId;
+		command.id = reportId;
 
 		return await Mediator.instance.sendCommand(command);
 	}

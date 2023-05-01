@@ -95,6 +95,20 @@ export default function Message(props: any) {
 			}
 		});
 	}
+	if (isOwnMessage) {
+		contextMenuItems.push({
+			text: 'Delete',
+			onClick: () => {
+				dispatch({
+					type: 'messages/deleteMessage',
+					payload: {
+						messageId: message.id,
+						chatId: message.chatId,
+					}
+				});
+			}
+		});
+	}
 
 	return (
 		<div 

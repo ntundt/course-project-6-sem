@@ -17,7 +17,8 @@ export class GetReportsListCommandHandler extends CommandHandlerBase<GetReportsL
 			},
 			order: {
 				createdAt: 'ASC'
-			}
+			},
+			relations: ['message'],
 		});
 
 		return reports.map(report => new ReportDto(report));
