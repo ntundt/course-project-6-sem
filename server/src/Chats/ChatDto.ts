@@ -23,6 +23,7 @@ export class ChatDto {
 	public createdAt: Date;
 	public messages: MessageDto[];
 	public membersCount?: number;
+	public creatorId?: number;
 	public unreadMessagesCount?: number;
 
 	public constructor(chat: Chat) {
@@ -32,6 +33,7 @@ export class ChatDto {
 		this.avatar = chat.avatar;
 		this.createdAt = chat.createdAt;
 		this.messages = chat.messages.map(message => new MessageDto(message));
+		if (!chat.isPrivate) this.creatorId = chat.creatorId;
 		this.membersCount = chat.members.length;
 	}
 
