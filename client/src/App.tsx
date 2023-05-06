@@ -11,6 +11,8 @@ import { AppDispatch } from './features/store';
 import { fetchToken } from './features/authSlice';
 import ReportMessageModal from './components/Modals/ReportMessageModal/ReportMessageModal';
 import ReportsViewModal from './components/Modals/ReportsViewModal/ReportsViewModal';
+import ChatMembersModal from './components/Modals/ChatMembersModal/ChatMembersModal';
+import ChatCreationModal from './components/Modals/ChatCreationModal/ChatCreationModal';
 
 function App() {
 	const dispatch = useDispatch<AppDispatch>();
@@ -54,6 +56,8 @@ function App() {
 			</div>
 			<ReportMessageModal />
 			<ReportsViewModal />
+			<ChatMembersModal />
+			<ChatCreationModal />
 		</>
 	);
 }

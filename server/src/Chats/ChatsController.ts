@@ -31,7 +31,19 @@ export default class ChatsController {
 	): Promise<ChatDto> {
 		command.creatorId = user.userId;
 
-		return await Mediator.instance.sendCommand(command);
+		const result = await Mediator.instance.sendCommand(command);
+
+		command.userIds.forEach(participant => {
+			console.log(`Subscribing ${participant} to chat:${result.id}`);
+			Mediator.instance.getNotificationService().subscribe(participant, `chat:${result.id}`);
+		});
+
+		Mediator.instance.getNotificationService().send(result.id, 'notification', {
+			type: 'chatsList/chatAdded',
+			payload: result,
+		});
+
+		return result;
 	}
 
 }

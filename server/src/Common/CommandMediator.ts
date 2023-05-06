@@ -1,25 +1,34 @@
-import CommandHandlerBase from './CommandHandlerBase';
 import { EntityManager } from 'typeorm';
-import { CreateNewMessageCommandHandler } from '../Messages/Commands/CreateNewMessageCommand';
+
 import { CheckPasswordCommandHandler } from '../Auth/Commands/CheckPasswordCommand';
-import { CreateChatCommandHandler } from '../Chats/Commands/CreateChatCommand';
-import { GetChatListCommandHandler } from '../Chats/Commands/GetChatsListCommand';
-import { EnsureUserIsChatMemberCommandHandler } from '../Messages/Commands/EnsureUserIsChatMemberCommand';
-import { GetChatMessagesCommandHandler } from '../Messages/Commands/GetChatMessagesCommand';
-import { GetChatInfoCommandHandler } from '../Chats/Commands/GetChatInfoCommand';
-import { EditMessageCommandHandler } from '../Messages/Commands/EditMessageCommand';
+
 import { CreateAttachmentCommandHandler } from '../Attachments/Commands/CreateAttachment';
-import { EditUserCommandHandler } from '../User/Commands/EditUserCommand';
-import { CreateUserCommandHandler } from '../User/Commands/CreateUserCommand';
-import { CreateReportCommandHandler } from '../Reports/Commands/CreateReportCommand';
-import { ProcessReportCommandHandler } from '../Reports/Commands/ProcessReportCommand';
-import { GetReportsListCommandHandler } from '../Reports/Commands/GetReportsListCommand';
+
+import { CreateChatCommandHandler } from '../Chats/Commands/CreateChatCommand';
+import { GetChatInfoCommandHandler } from '../Chats/Commands/GetChatInfoCommand';
+import { GetChatListCommandHandler } from '../Chats/Commands/GetChatsListCommand';
+
 import { AddChatMemberCommandHandler } from '../Messages/Commands/AddChatMemberCommand';
-import { RemoveChatMemberCommandHandler } from '../Messages/Commands/RemoveChatMemberCommand';
-import { GetUserByIdCommandHandler } from '../User/Commands/GetUserByIdCommand';
-import NotificataionService from './NotificationService';
-import { GetUserRoomsCommandHandler } from './Commands/GetUserRoomsCommand';
+import { CreateNewMessageCommandHandler } from '../Messages/Commands/CreateNewMessageCommand';
+import { EditMessageCommandHandler } from '../Messages/Commands/EditMessageCommand';
+import { EnsureUserIsChatMemberCommandHandler } from '../Messages/Commands/EnsureUserIsChatMemberCommand';
+import { GetChatMembersCommandHandler } from '../Messages/Commands/GetChatMembersCommand';
+import { GetChatMessagesCommandHandler } from '../Messages/Commands/GetChatMessagesCommand';
 import { MarkMessageAsReadCommandHandler } from '../Messages/Commands/MarkMessageAsReadCommand';
+import { RemoveChatMemberCommandHandler } from '../Messages/Commands/RemoveChatMemberCommand';
+
+import { CreateReportCommandHandler } from '../Reports/Commands/CreateReportCommand';
+import { GetReportsListCommandHandler } from '../Reports/Commands/GetReportsListCommand';
+import { ProcessReportCommandHandler } from '../Reports/Commands/ProcessReportCommand';
+
+import { CreateUserCommandHandler } from '../User/Commands/CreateUserCommand';
+import { EditUserCommandHandler } from '../User/Commands/EditUserCommand';
+import { GetUserByIdCommandHandler } from '../User/Commands/GetUserByIdCommand';
+import { SearchUsersCommandHandler } from '../User/Commands/SearchUsersCommand';
+
+import { GetUserRoomsCommandHandler } from './Commands/GetUserRoomsCommand';
+import CommandHandlerBase from './CommandHandlerBase';
+import NotificataionService from './NotificationService';
 
 
 export default class Mediator {
@@ -43,10 +52,8 @@ export default class Mediator {
 		this._commandHandlers.set('CreateChatCommand', new CreateChatCommandHandler(entityManager));
 		this._commandHandlers.set('GetChatListCommandHandler', new GetChatListCommandHandler(entityManager));
 		this._commandHandlers.set('CreateNewMessageCommand', new CreateNewMessageCommandHandler(entityManager));
-		// this._commandHandlers.set('EditMessageCommand', new EditMessageCommandHandler(entityManager));
 		this._commandHandlers.set('EnsureUserIsChatMemberCommand', new EnsureUserIsChatMemberCommandHandler(entityManager));
 		this._commandHandlers.set('GetChatMessagesCommand', new GetChatMessagesCommandHandler(entityManager));
-		//this._commandHandlers.set('GetDialogsCommand', new GetDialogsCommandHandler(entityManager));
 		this._commandHandlers.set('CreateChatCommand', new CreateChatCommandHandler(entityManager));
 		this._commandHandlers.set('GetChatListCommand', new GetChatListCommandHandler(entityManager));
 		this._commandHandlers.set('GetChatInfoCommand', new GetChatInfoCommandHandler(entityManager));
@@ -62,6 +69,8 @@ export default class Mediator {
 		this._commandHandlers.set('GetUserByIdCommand', new GetUserByIdCommandHandler(entityManager));
 		this._commandHandlers.set('MarkMessageAsReadCommand', new MarkMessageAsReadCommandHandler(entityManager));
 		this._commandHandlers.set('GetUserRoomsCommand', new GetUserRoomsCommandHandler(entityManager));
+		this._commandHandlers.set('GetChatMembersCommand', new GetChatMembersCommandHandler(entityManager));
+		this._commandHandlers.set('SearchUsersCommand', new SearchUsersCommandHandler(entityManager));
 	}
 
 	public setNotificationService(notificationService: NotificataionService) {

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToOne, OneToOne, ManyToMany, CreateDateColumn, UpdateDateColumn, JoinTable, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToMany } from 'typeorm';
 import { Chat } from '../Chats/Chat';
 import * as crypto from 'crypto';
 import { Report } from '../Reports/Report';
@@ -45,7 +45,7 @@ export class User {
 	@Column({ nullable: true })
 	blockedById: number;
 
-	@ManyToOne(() => User, user => user.id)
+	@ManyToOne('User', 'id')
 	@JoinColumn()
 	blockedBy: User;
 
@@ -55,10 +55,10 @@ export class User {
 	/**
 	 * The group chats that the user is a member of.
 	 */
-	@ManyToMany(() => Chat, groupChat => groupChat.members)
+	@ManyToMany('Chat', 'members')
 	groupChats: Chat[];
 
-	@OneToMany(() => Report, report => report.user)
+	@OneToMany('Report', 'user')
 	reports: Report[];
 
 }

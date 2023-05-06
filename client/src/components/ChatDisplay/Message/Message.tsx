@@ -62,8 +62,6 @@ export default function Message(props: any) {
 		};
 
 		contextMenuHidingEvents.forEach((event) => {
-			// ignore the event that triggered current context menu
-			
 			document.addEventListener(event, (event) => {
 				if (event.type === 'contextmenu') {
 					if (event.target === e.target) {
@@ -154,12 +152,41 @@ export default function Message(props: any) {
 							targetRowHeight={400}
 							spacing={5}
 							padding={0}
-							photos={attachments?.filter((attachment: any) => attachment.type === 'Image' || attachment.type === 'Video')
+							photos={attachments?.filter((attachment: any) => 
+								attachment.type === 'Image' || attachment.type === 'Video' || attachment.type === 'Animation')
 								.map((attachment: any) => ({
 									src: attachment.url,
 									width: attachment.width,
 									height: attachment.height,
-								}))} />
+								}))}
+							renderPhoto={({ photo: { src }, layout: { width, height } }) => {
+								const videoExtensions = ['mp4', 'webm', 'ogg'];
+								const type = src.split('.').pop() ?? '';
+								console.log('type', type);
+								if (videoExtensions.includes(type)) {
+									return (
+										<video
+											controls
+											playsInline
+											width={Math.round(width)}
+											height={Math.round(height)}
+											style={{ objectFit: "cover" }}
+										>
+											<source type='video/mp4' src={src} />
+										</video>
+									);
+								} else if (type === 'gif') {
+									return (
+										<img
+											src={src}
+											width={Math.round(width)}
+											height={Math.round(height)}
+											style={{ objectFit: "cover" }}
+										/>
+									)
+								}
+							}}		
+						/>
 					</div>
 				}
 				<div className='Message-text'>{text}</div>

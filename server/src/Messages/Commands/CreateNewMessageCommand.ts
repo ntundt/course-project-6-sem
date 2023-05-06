@@ -4,7 +4,7 @@ import { Attachment } from '../../Attachments/Attachment';
 import { User } from '../../User/User';
 import CommandHandlerBase from '../../Common/CommandHandlerBase';
 import MessagesService from '../MessagesService';
-import ChatNotFoundError from '../../Common/Errors/ChatNotFoundError';
+import ChatNotFoundError from '../../Chats/Errors/ChatNotFoundError';
 import MessageDto from '../MessageDto';
 
 export class CreateNewMessageCommand {

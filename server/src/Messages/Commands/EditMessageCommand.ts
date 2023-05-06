@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 import CommandHandlerBase from '../../Common/CommandHandlerBase';
 import { Message } from '../Message';
-import ChatNotFoundError from '../../Common/Errors/ChatNotFoundError';
+import ChatNotFoundError from '../../Chats/Errors/ChatNotFoundError';
 import MessagesService from '../MessagesService';
 import { HttpError } from 'routing-controllers';
 import { Attachment } from '../../Attachments/Attachment';

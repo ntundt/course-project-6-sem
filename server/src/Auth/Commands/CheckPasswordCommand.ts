@@ -3,8 +3,8 @@ import CommandHandlerBase from '../../Common/CommandHandlerBase';
 import { User } from '../../User/User';
 
 import crypto from 'crypto';
-import UserNotFoundError from '../../Common/Errors/UserNotFoundError';
-import WrongPasswordError from '../../Common/Errors/WrongPasswordError';
+import UserNotFoundError from '../../User/Errors/UserNotFoundError';
+import WrongPasswordError from '../Errors/WrongPasswordError';
 
 export class CheckPasswordCommand {
 	username: string;

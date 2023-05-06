@@ -11,7 +11,7 @@ export class Chat {
 	@Column()
 	creatorId: number;
 
-	@ManyToOne(() => User, user => user.id)
+	@ManyToOne('User', 'id')
 	@JoinColumn()
 	creator: User;
 
@@ -37,11 +37,15 @@ export class Chat {
 	 * The members of the group chat.
 	 * For now, supports only users. In the future, I may want to support bots.
 	 */
-	@ManyToMany(() => User, user => user.groupChats, { cascade: true })
+	@ManyToMany('User', 'groupChats', { cascade: true })
 	@JoinTable()
 	members: User[];
 
-	@OneToMany(() => Message, message => message.destinationChatId)
+	@OneToMany('Message', 'destinationChatId')
 	messages: Message[];
+
+	/**
+	 * Calculated: number of unread messages in the chat.
+	 */
 
 }

@@ -13,6 +13,7 @@ import { AppDispatch } from '../../features/store';
 import debounce from 'lodash/debounce';
 
 import config from '../../config.json';
+import { showMembersModal } from '../../features/reducers/chatMembersSlice';
 
 export default function ChatDisplay() {
 	const messagesListRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,10 @@ export default function ChatDisplay() {
 	const messages = chat?.messages;
 	const avatarUrl = getAvatarUrl(chat);
 	const isPrivate = chat?.type !== 'group';
+
+	const openChatMembersModal = () => {
+		dispatch(showMembersModal({ chatId: chat.id }));
+	}
 
 	return (<>
 			<div className={['ChatDisplay col-8', chat ? '' : 'd-none'].join(' ')}>
@@ -40,7 +45,8 @@ export default function ChatDisplay() {
 							</div>
 							<div className="ChatDisplay-chat-description">
 								<small>
-									{isPrivate ? 'Private chat' : chat?.membersCount + ' members'}
+									{isPrivate ? 'Private chat' : 
+										<a href="#" onClick={openChatMembersModal}>{chat?.membersCount} members</a>}
 								</small>
 							</div>
 						</div>

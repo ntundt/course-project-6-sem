@@ -12,7 +12,8 @@ import ChatsController from './Chats/ChatsController';
 import Strategy from './Auth/AuthInit';
 import AuthController from './Auth/AuthController';
 import Mediator from './Common/CommandMediator';
-import * as config from './config.json';
+import fs from 'fs/promises';
+const config = JSON.parse(await fs.readFile('./src/config.json', 'utf-8'));
 import AttachmentsController from './Attachments/AttachmentsController';
 import UsersController from './User/UsersController';
 import { Report } from './Reports/Report';
@@ -26,19 +27,6 @@ import { GetUserRoomsCommand, GetUserRoomsCommandResult } from './Common/Command
 //utc
 process.env.TZ = 'Europe/Minsk';
 console.log('Timezone used ', process.env.TZ);
-
-const data = new DataSource({
-	type: 'mysql',
-	timezone: 'UTC',
-	...config.typeorm,
-	entities: [
-		User,
-		Chat,
-		Message,
-		Attachment,
-		Report,
-	],
-});
 
 
 const app: express.Application = createExpressServer({
@@ -85,9 +73,22 @@ const app: express.Application = createExpressServer({
 passport.use(Strategy);
 
 (async function main() {
+	const data = new DataSource({
+		type: 'mysql',
+		timezone: 'UTC',
+		...config.typeorm,
+		entities: [
+			User,
+			Chat,
+			Message,
+			Attachment,
+			Report,
+		],
+	});
 	await data.initialize();
 	console.log('Database connected');
 	Mediator.instance.setEntityManager(data.createEntityManager());
+	app.use('/' + config.server.upload_url, express.static(config.server.upload_dir));
 })();
 
 app.all('*', (req, res, next) => {
@@ -110,7 +111,6 @@ console.log('Server started');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use('/' + config.server.upload_url, express.static(config.server.upload_dir));
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {

@@ -32,6 +32,17 @@ export class GetChatListCommandHandler extends CommandHandlerBase<GetChatListCom
 				"message",
 				"message.destinationChatId = chat.id AND message.createdAt = latest.maxDate"
 			)
+			.leftJoinAndSelect("message.sender", "sender")
+			.leftJoinAndSelect("message.attachments", "attachments")
+			.addSelect(subQuery => {
+				const subQueryAlias = subQuery.subQuery();
+				const subQuerySelect = subQueryAlias
+					.select("COUNT(*)")
+					.from(Message, "message")
+					.where("message.destinationChatId = chat.id")
+					.andWhere("message.read = 0");
+				return subQuerySelect;
+			}, "unreadCount")
 			.where(subQuery => {
 				const subQueryAlias = subQuery.subQuery();
 				const subQuerySelect = subQueryAlias
@@ -42,8 +53,6 @@ export class GetChatListCommandHandler extends CommandHandlerBase<GetChatListCom
 					.getQuery();
 				return "exists " + subQuerySelect;
 			})
-			.leftJoinAndSelect("message.sender", "sender")
-			.leftJoinAndSelect("message.attachments", "attachments")
 			.orderBy("message.createdAt", "DESC")
 			.getMany();
 
@@ -51,8 +60,8 @@ export class GetChatListCommandHandler extends CommandHandlerBase<GetChatListCom
 			if (!chat.isPrivate) return;
 
 			const otherMember = chat.members.find(member => member.id !== command.userId);
-			chat.name = otherMember.name;
-			chat.avatar = otherMember.profilePicUrl;
+			chat.name = otherMember?.name ?? `${otherMember?.username}`;
+			chat.avatar = otherMember?.profilePicUrl ?? '';
 		});
 
 		return chats.map(chat => new ChatDto(chat));

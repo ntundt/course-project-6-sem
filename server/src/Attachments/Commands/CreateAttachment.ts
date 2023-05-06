@@ -2,11 +2,13 @@ import { EntityManager, Repository } from 'typeorm';
 import CommandHandlerBase from '../../Common/CommandHandlerBase';
 import AttachmentType from '../AttachmentType.enum';
 import { Attachment, getAttachmentPath } from '../Attachment';
-import * as fs from 'fs/promises';
-import * as config from '../../config.json';
+import fs from 'fs/promises';
+const config = JSON.parse(await fs.readFile('./src/config.json', 'utf-8'));
 import { HttpError } from 'routing-controllers';
 import ffmpeg from 'fluent-ffmpeg';
 import * as Stream from 'stream';
+
+import * as child_process from 'child_process';
 
 export class CreateAttachmentCommand {
 	public creatorId: number;
@@ -32,7 +34,7 @@ export class CreateAttachmentCommandHandler extends CommandHandlerBase<CreateAtt
 		return path;
 	}
 
-	private getMediaDimensions(buffer: Buffer): Promise<{ width: number, height: number }> {
+	private getMediaDimensions(buffer: Buffer, type: AttachmentType): Promise<{ width: number, height: number }> {
 		return new Promise((resolve, reject) => {
 			const readableStream = new Stream.Readable();
 			readableStream.push(buffer);
@@ -40,6 +42,25 @@ export class CreateAttachmentCommandHandler extends CommandHandlerBase<CreateAtt
 
 			ffmpeg.setFfmpegPath(config.envionment.ffmpeg_path);
 			ffmpeg.setFfprobePath(config.envionment.ffprobe_path);
+
+			if (type === AttachmentType.Animation) {
+				const command = child_process.spawn(config.envionment.ffprobe_path, [
+					'-v', 'error',
+					'-show_entries', 'stream=width,height',
+					'-of', 'csv=p=0:s=x',
+					'-'
+				]);
+				command.stdout.on('data', (data) => {
+					const dimensions = data.toString().split('x');
+					resolve({
+						width: parseInt(dimensions[0]),
+						height: parseInt(dimensions[1])
+					});
+				});
+				command.stdin.write(buffer);
+				command.stdin.end();
+				return;
+			}
 
 			ffmpeg(readableStream)
 				.ffprobe((err, data) => {
@@ -55,6 +76,7 @@ export class CreateAttachmentCommandHandler extends CommandHandlerBase<CreateAtt
 						reject(e);
 					}
 				});
+			
 		});
 	}
 
@@ -67,8 +89,9 @@ export class CreateAttachmentCommandHandler extends CommandHandlerBase<CreateAtt
 				attachment.filename = command.filename;
 				attachment.type = command.type as AttachmentType;
 
-				if (attachment.type === AttachmentType.Image || attachment.type === AttachmentType.Video) {
-					const dimensions = await this.getMediaDimensions(command.file.buffer);
+				if (attachment.type === AttachmentType.Image || attachment.type === AttachmentType.Video
+					|| attachment.type === AttachmentType.Animation) {
+					const dimensions = await this.getMediaDimensions(command.file.buffer, attachment.type);
 					attachment.width = dimensions.width;
 					attachment.height = dimensions.height;
 				}

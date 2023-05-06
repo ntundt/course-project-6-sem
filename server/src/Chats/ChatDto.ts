@@ -21,20 +21,21 @@ export class ChatDto {
 	public name: string;
 	public avatar: string;
 	public createdAt: Date;
-	public messages: MessageDto[];
+	public messages?: MessageDto[];
 	public membersCount?: number;
 	public creatorId?: number;
-	public unreadMessagesCount?: number;
+	public unreadCount?: number;
 
-	public constructor(chat: Chat) {
+	public constructor(chat: Chat, unreadCount?: number) {
 		this.id = chat.id;
 		this.type = chat.isPrivate ? 'private' : 'group';
 		this.name = chat.name;
 		this.avatar = chat.avatar;
 		this.createdAt = chat.createdAt;
-		this.messages = chat.messages.map(message => new MessageDto(message));
+		this.messages = chat.messages?.map(message => new MessageDto(message));
 		if (!chat.isPrivate) this.creatorId = chat.creatorId;
 		this.membersCount = chat.members.length;
+		this.unreadCount = unreadCount;
 	}
 
 }

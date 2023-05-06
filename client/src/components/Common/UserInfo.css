@@ -4,10 +4,17 @@
 	gap: 1rem;
 }
 
+.UserInfo-selected {
+	background-color: #ebebeb;
+}
+
 .UserInfo-info-container {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	gap: 0.5rem;
+	flex-grow: 1;
+	min-height: 100%;
 }
 
 .UserInfo-controls-container {

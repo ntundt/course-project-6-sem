@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Generated, CreateDateColumn } from 'typeorm';
 import { Message } from '../Messages/Message';
 import AttachmentType from './AttachmentType.enum';
-import * as config from '../config.json';
+import fs from 'fs/promises';
+const config = JSON.parse(await fs.readFile('./src/config.json', 'utf-8'));
 import { User } from '../User/User';
 
 /**
@@ -21,14 +22,14 @@ export class Attachment {
 	@Column({ nullable: false, default: 1 })
 	uploaderId: number;
 
-	@ManyToOne(() => User, user => user.id)
+	@ManyToOne('User', 'id')
 	@JoinColumn()
 	uploader: User;
 
 	@Column({ nullable: true })
 	messageId: number;
 
-	@ManyToOne(() => Message, message => message.attachments)
+	@ManyToOne('Message', 'attachments')
 	@JoinColumn()
 	message: Message;
 

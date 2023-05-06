@@ -1,4 +1,4 @@
-import { Authorized, Body, CurrentUser, Get, JsonController, Param, Post, Put, UseBefore } from 'routing-controllers';
+import { Authorized, Body, CurrentUser, Get, JsonController, Param, Post, Put, QueryParam, UseBefore } from 'routing-controllers';
 import TokenPayload from '../Auth/TokenPayload';
 import Mediator from '../Common/CommandMediator';
 import { EditUserCommand } from './Commands/EditUserCommand';
@@ -9,9 +9,23 @@ import { CheckPasswordCommand, CheckPasswordCommandResult } from '../Auth/Comman
 import { GetUserByIdCommand } from './Commands/GetUserByIdCommand';
 import enableCors from '../Common/CorsEnabler';
 import enableCache from '../Common/CacheEnabler';
+import { SearchUsersCommand } from './Commands/SearchUsersCommand';
 
 @JsonController()
 export default class UsersController {
+
+	@UseBefore(enableCors)
+	@Authorized()
+	@Get('/api/users/search')
+	public async searchUsers(
+		@QueryParam('query') query: string,
+	): Promise<UserDto[]> {
+		const command = new SearchUsersCommand();
+
+		command.query = query;
+
+		return await Mediator.instance.sendCommand(command);
+	}
 
 	@UseBefore(enableCache)
 	@UseBefore(enableCors)

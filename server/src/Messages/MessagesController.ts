@@ -11,6 +11,8 @@ import { RemoveChatMemberCommand } from './Commands/RemoveChatMemberCommand';
 import enableCors from '../Common/CorsEnabler';
 import { MarkMessageAsReadCommand } from './Commands/MarkMessageAsReadCommand';
 import { ExecutionResponseDto } from '../Common/ExecutionResponseDto';
+import { GetChatMembersCommand } from './Commands/GetChatMembersCommand';
+import CreateNewMesssageCommandValidator from './Commands/CreateNewMessageCommandValidator';
 
 // TODO: Create a trigger that makes sure that a user is in fact a chat member, before allowing it to send message into the chat
 
@@ -49,6 +51,8 @@ export default class MessageController {
 		if (!command.attachmentIds) {
 			command.attachmentIds = [];
 		}
+
+		new CreateNewMesssageCommandValidator().validateAndThrow(command);
 
 		const message = await Mediator.instance.sendCommand(command);
 
@@ -102,12 +106,26 @@ export default class MessageController {
 	}
 
 	@UseBefore(enableCors)
+	@Get('/api/chats/:chatId/members')
+	public async getChatMembers(
+		@Param('chatId') chatId: number,
+		@CurrentUser() user: TokenPayload,
+	): Promise<number[]> {
+		const command = new GetChatMembersCommand();
+
+		command.chatId = chatId;
+
+		return await Mediator.instance.sendCommand(command);
+	}
+
+
+	@UseBefore(enableCors)
 	@Post('/api/chats/:chatId/members/:userId')
 	public async addMemberToChat(
 		@Param('chatId') chatId: number,
 		@Param('userId') userId: number,
 		@CurrentUser() user: TokenPayload,
-	): Promise<void> {
+	): Promise<ExecutionResponseDto> {
 		const command = new AddChatMemberCommand();
 		
 		command.adderId = user.userId;
@@ -115,6 +133,8 @@ export default class MessageController {
 		command.userId = userId;
 
 		await Mediator.instance.sendCommand(command);
+
+		return new ExecutionResponseDto(true);
 	}
 
 	@UseBefore(enableCors)
@@ -123,7 +143,7 @@ export default class MessageController {
 		@Param('chatId') chatId: number,
 		@Param('userId') userId: number,
 		@CurrentUser() user: TokenPayload,
-	): Promise<void> {
+	): Promise<ExecutionResponseDto> {
 		const command = new RemoveChatMemberCommand();
 		
 		command.removerId = user.userId;
@@ -131,6 +151,8 @@ export default class MessageController {
 		command.userId = userId;
 
 		await Mediator.instance.sendCommand(command);
+
+		return new ExecutionResponseDto(true);
 	}
 
 }

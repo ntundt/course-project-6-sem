@@ -8,6 +8,7 @@ import { AppDispatch } from '../../features/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFlag, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { showViewModal } from '../../features/reducers/reportsSlice';
+import { showCreationModal } from '../../features/reducers/chatCreationSlice';
 
 export default function ChatList() {
 	const dispatch = useDispatch<AppDispatch>();
@@ -26,10 +27,15 @@ export default function ChatList() {
 		dispatch(showViewModal({}));
 	};
 
+	const onChatCreateModalOpen = () => {
+		dispatch(showCreationModal({}));
+	};
+
 	return (
 		<div className="ChatList col-4">
 			<div className='ChatList-header'>
-				<button className='ChatList-seamless-button'>
+				<button className='ChatList-seamless-button'
+					onClick={onChatCreateModalOpen}>
 					<FontAwesomeIcon
 						icon={faUserPlus}
 						color='#007bff'

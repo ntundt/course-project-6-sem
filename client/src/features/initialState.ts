@@ -37,6 +37,22 @@ const initialState: any = {
 		loading: false,
 		error: null,
 	},
+	chatMembersModal: {
+		show: false,
+		chatId: null,
+		loading: false,
+		error: null,
+	},
+	userSelectionModal: {
+		show: false,
+		loading: false,
+		error: null,
+	},
+	chatCreationModal: {
+		show: false,
+		loading: false,
+		error: null,
+	},
 }
 
 export default initialState;

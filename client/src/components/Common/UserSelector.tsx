@@ -1,47 +1,100 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import './UserSelector.css';
+
+import { useEffect, useState } from 'react';
+import { Form, InputGroup, Spinner } from 'react-bootstrap';
+import { axios } from '../../features/apiCalls';
+import UserInfo from './UserInfo';
 
 export default function UserSelector(props: {
-	excludedUserIds: number[],
-	onSelect: (user: any[]) => void,
-	selectSingle: boolean,
+	onSelect(selectedUsers: any[]): unknown;
+	excludedUserIds?: number[],
+	selectMultiple?: boolean,
 }) {
-	const [users, setUsers] = useState<any[]>([]);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [foundUsers, setFoundUsers] = useState<any[]>([]);
 	const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
-	const [search, setSearch] = useState<string>('');
-	
+
+	const [isLoading, setIsLoading] = useState(false);
+
+	// For loading animation to be visible for at least 500ms, so popup doesn't flash
+	const [loadingTimeout, setLoadingTimeout] = useState<any>(null);
+
+	useEffect(() => {
+		if (searchQuery === '') {
+			setFoundUsers([]);
+			return;
+		}
+		setIsLoading(true);
+		axios.get('/users/search', {
+			params: {
+				query: searchQuery,
+			},
+		}).then((response: any) => {
+			setFoundUsers(response.data);
+			clearTimeout(loadingTimeout);
+			setLoadingTimeout(setTimeout(() => {
+				setIsLoading(false);
+			}, 500));
+		});
+	}, [searchQuery]);
+
+	useEffect(() => {
+		if (!props.selectMultiple) {
+			setSelectedUsers([selectedUsers[0]]);
+		}
+	}, [props.selectMultiple]);
+
+	useEffect(() => {
+		props.onSelect(selectedUsers);
+	}, [selectedUsers]);
+
 	return (
 		<div className='UserSelector'>
-			<div className='UserSelector-search'>
-				<input type='text' value={search} onChange={e => setSearch(e.target.value)} />
-			</div>
-			<div className='UserSelector-users'>
-				{users.map(user => (
-					<div className='UserSelector-user' key={user.id}>
-						<div className='UserSelector-user-avatar'>
-							<img src={user.avatar} alt='avatar' />
-						</div>
-						<div className='UserSelector-user-name'>
-							{user.name}
-						</div>
-						<div className='UserSelector-user-username'>
-							@{user.username}
-						</div>
-						<div className='UserSelector-user-select'>
-							<input type='checkbox' checked={selectedUsers.includes(user)} onChange={e => {
-								if (e.target.checked) {
-									setSelectedUsers([...selectedUsers, user]);
-								} else {
-									setSelectedUsers(selectedUsers.filter(u => u !== user));
+			<InputGroup className='mb-3'>
+				<Form.Control
+					type='text'
+					placeholder='Search for users...'
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+				/>
+			</InputGroup>
+			
+			{ !isLoading && foundUsers.length !== 0 && (
+				<div className='UserSelector-users'>
+					{foundUsers.map((user: any) => ( props.excludedUserIds && props.excludedUserIds.includes(user.id) ) ? null : (
+						<UserInfo
+							key={user.id}
+							name={user.name}
+							avatar={user.avatar}
+							username={user.username}
+							isSelected={selectedUsers.includes(user)}
+							onSelect={() => {
+								if (!props.selectMultiple) {
+									setSelectedUsers([user]);
+									return;
 								}
-							}} />
-						</div>
-					</div>
-				))}
-			</div>
-			<div className='UserSelector-buttons'>
-				<button onClick={() => props.onSelect(selectedUsers)}>Select</button>
-			</div>
-		</div>							
+								if (selectedUsers.includes(user)) {
+									setSelectedUsers(selectedUsers.filter((u) => u !== user));
+								} else {
+									setSelectedUsers([...selectedUsers, user]);
+								}
+							}}
+						/>
+					))}
+				</div>
+			)}
+
+			{ !isLoading && foundUsers.length === 0 && (
+				<div className='UserSelector-no-users-found'>
+					No users found
+				</div>
+			)}
+
+			{ isLoading && (
+				<div className='UserSelector-loading'>
+					<Spinner animation='border' />
+				</div>
+			)}
+		</div>				
 	);
 }

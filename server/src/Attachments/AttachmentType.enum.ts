@@ -2,7 +2,8 @@ enum AttachmentType {
 	Image = 'Image',
 	Video = 'Video',
 	Audio = 'Audio',
-	Document = 'Document'
+	Animation = 'Animation',
+	Document = 'Document',
 }
 
 export default AttachmentType;

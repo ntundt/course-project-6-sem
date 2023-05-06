@@ -16,14 +16,14 @@ export class Message /* implements PolymorphicChildInterface */ {
 	@Column()
 	senderId: number;
 
-	@ManyToOne(() => User, user => user.id)
+	@ManyToOne('User', 'id')
 	@JoinColumn()
 	sender: User;
 
 	@Column({ nullable: true })
 	destinationChatId: number;
 
-	@ManyToOne(() => Chat, chat => chat.messages)
+	@ManyToOne('Chat', 'messages')
 	destinationChat: Chat;
 
 	@Column({ length: 4096 })
@@ -32,7 +32,7 @@ export class Message /* implements PolymorphicChildInterface */ {
 	@Column({ default: false })
 	read: boolean;
 
-	@OneToMany(() => Attachment, attachment => attachment.message)
+	@OneToMany('Attachment', 'message')
 	attachments: Attachment[];
 
 	@Index()

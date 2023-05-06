@@ -1,0 +1,18 @@
+.UserSelector-users {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.UserSelector-no-users-found {
+  margin-top: 1rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.UserSelector-loading {
+  margin-top: 1rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+}

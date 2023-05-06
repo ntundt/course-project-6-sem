@@ -29,9 +29,9 @@ export default class AttachmentsController {
 		@CurrentUser() user: TokenPayload,
 	) {
 		try {
-			if (!AttachmentChecker.checkAttachmentAllowed(file)) {
+			/*if (!AttachmentChecker.checkAttachmentAllowed(file)) {
 				throw new HttpError(422, 'Unprocessable entity');
-			}
+			}*/
 
 			const command = new CreateAttachmentCommand();
 			command.creatorId = user.userId;
@@ -45,6 +45,7 @@ export default class AttachmentsController {
 
 			return dto;
 		} catch (error) {
+			console.log(error);
 			throw new HttpError(422, 'Unprocessable entity');
 		}
 	}
