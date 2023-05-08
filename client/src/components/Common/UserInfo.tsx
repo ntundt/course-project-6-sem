@@ -7,7 +7,7 @@ import classes from './classesString';
 
 export default function UserInfo(props: {
 	username: string,
-	avatar: string,
+	avatar: string | null,
 	name: string,
 	isSelected?: boolean,
 	showDeleteControl?: boolean,

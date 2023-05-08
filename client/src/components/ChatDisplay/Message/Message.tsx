@@ -10,7 +10,7 @@ import { AppDispatch } from '../../../features/store';
 import { useEffect, useRef, useState } from 'react';
 import { fetchUserById, setMessageRead } from '../../../features/apiCalls';
 import classes from '../../Common/classesString';
-import TimeDisplay from '../../TimeDipsplay/TimeDisplay';
+import TimeDisplay from '../../TimeDisplay/TimeDisplay';
 import DeliveryStatusIcon from './DeliveryStatusIcon/DeliveryStatusIcon';
 import useOnScreen from '../../Common/useOnScreen';
 import ContextMenu from '../../Common/ContextMenu';
@@ -162,7 +162,6 @@ export default function Message(props: any) {
 							renderPhoto={({ photo: { src }, layout: { width, height } }) => {
 								const videoExtensions = ['mp4', 'webm', 'ogg'];
 								const type = src.split('.').pop() ?? '';
-								console.log('type', type);
 								if (videoExtensions.includes(type)) {
 									return (
 										<video

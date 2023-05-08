@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Form, InputGroup, Spinner } from 'react-bootstrap';
 import { axios } from '../../features/apiCalls';
 import UserInfo from './UserInfo';
+import { getAvatarUrl } from './Avatar';
 
 export default function UserSelector(props: {
 	onSelect(selectedUsers: any[]): unknown;
@@ -65,7 +66,7 @@ export default function UserSelector(props: {
 						<UserInfo
 							key={user.id}
 							name={user.name}
-							avatar={user.avatar}
+							avatar={getAvatarUrl(user)}
 							username={user.username}
 							isSelected={selectedUsers.includes(user)}
 							onSelect={() => {

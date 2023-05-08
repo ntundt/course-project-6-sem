@@ -30,14 +30,26 @@ export class CreateChatCommandHandler extends CommandHandlerBase<CreateChatComma
 	}
 
 	private async throwIfChatExists(tem: EntityManager, userIds: number[]) {
-		const existingChat = await tem.getRepository(Chat).findOne({
+		const existingChats = await tem.getRepository(Chat).find({
 			where: {
 				isPrivate: true,
-				members: userIds.map(userId => ({ id: userId })),
+				members: {
+					id: In(userIds),
+				},
 			},
+			relations: ['members'],
 		});
 
+		// check that all members are in the chat. comparing lengths doesn't work
+		// because the query returns all chats that have at least one of the members
+		const existingChat = existingChats.find(chat => 
+			chat.members.every(member => userIds.indexOf(member.id) !== -1)
+			&& userIds.every(userId => chat.members.some(member => member.id === userId)));
+
+		console.log(existingChat);
+
 		if (existingChat) {
+			console.log(userIds);
 			throw new ChatAlreadyExistsError(existingChat.id);
 		}
 	}

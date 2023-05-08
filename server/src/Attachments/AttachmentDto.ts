@@ -17,8 +17,6 @@ export default class AttachmentDto {
 	public height?: number;
 
 	constructor(attachment: Attachment) {
-		console.log('ATTACHMENT', attachment);
-
 		this.id = attachment.id;
 		this.filename = attachment.filename;
 		this.type = attachment.type;

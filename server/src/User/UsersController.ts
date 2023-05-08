@@ -10,6 +10,7 @@ import { GetUserByIdCommand } from './Commands/GetUserByIdCommand';
 import enableCors from '../Common/CorsEnabler';
 import enableCache from '../Common/CacheEnabler';
 import { SearchUsersCommand } from './Commands/SearchUsersCommand';
+import { ExecutionResponseDto } from '../Common/ExecutionResponseDto';
 
 @JsonController()
 export default class UsersController {
@@ -23,6 +24,49 @@ export default class UsersController {
 		const command = new SearchUsersCommand();
 
 		command.query = query;
+
+		return await Mediator.instance.sendCommand(command);
+	}
+
+	@UseBefore(enableCors)
+	@Authorized()
+	@Get('/api/username-available/:username')
+	public async checkUsernameAvailability(
+		@Param('username') username: string,
+		@CurrentUser() user: TokenPayload,
+	): Promise<ExecutionResponseDto> {
+		const command = new SearchUsersCommand();
+
+		command.query = username;
+
+		const users = await Mediator.instance.sendCommand(command) as UserDto[];
+		
+		return new ExecutionResponseDto(users.filter(u => u.username === username && u.id !== user.userId).length === 0);
+	}
+
+	@UseBefore(enableCors)
+	@Authorized()
+	@Get('/api/current-user')
+	public async getCurrentUser(
+		@CurrentUser() user: TokenPayload,
+	): Promise<UserDto> {
+		const command = new GetUserByIdCommand();
+
+		command.userId = user.userId;
+
+		return await Mediator.instance.sendCommand(command);
+	}
+
+	@UseBefore(enableCors)
+	@Authorized()
+	@Put('/api/current-user')
+	public async editCurrentUser(
+		@Body() command: EditUserCommand,
+		@CurrentUser() user: TokenPayload,
+	): Promise<UserDto> {
+		command.userId = user.userId;
+
+		new EditUserCommandValidator().validateAndThrow(command);
 
 		return await Mediator.instance.sendCommand(command);
 	}
@@ -50,20 +94,6 @@ export default class UsersController {
 		@CurrentUser() user: TokenPayload,
 	): Promise<UserDto> {
 		command.userId = userId;
-
-		return await Mediator.instance.sendCommand(command);
-	}
-
-	@UseBefore(enableCors)
-	@Authorized()
-	@Put('/api/current-user')
-	public async editCurrentUser(
-		@Body() command: EditUserCommand,
-		@CurrentUser() user: TokenPayload,
-	): Promise<UserDto> {
-		command.userId = user.userId;
-
-		new EditUserCommandValidator().validateAndThrow(command);
 
 		return await Mediator.instance.sendCommand(command);
 	}

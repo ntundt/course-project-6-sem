@@ -3,6 +3,8 @@ import { User, generateSalt, getPasswordHash } from '../User';
 import CommandHandlerBase from '../../Common/CommandHandlerBase';
 import { NotFoundError } from 'routing-controllers';
 import UserDto from '../UserDto';
+import { CheckPasswordCommand, CheckPasswordCommandResult } from '../../Auth/Commands/CheckPasswordCommand';
+import Mediator from '../../Common/CommandMediator';
 
 export class EditUserCommand {
 	public userId: number;
@@ -10,7 +12,8 @@ export class EditUserCommand {
 	public name?: string;
 	public username?: string;
 	public avatar?: string;
-	public password?: string;
+	public currentPassword?: string;
+	public newPassword?: string;
 }
 
 export class EditUserCommandHandler extends CommandHandlerBase<EditUserCommand, UserDto> {
@@ -45,10 +48,15 @@ export class EditUserCommandHandler extends CommandHandlerBase<EditUserCommand, 
 			user.profilePicUrl = command.avatar;
 		}
 
-		if (command.password) {
+		if (command.newPassword) {
+			const checkPasswordCommand = new CheckPasswordCommand();
+			checkPasswordCommand.username = user.username;
+			checkPasswordCommand.password = command.currentPassword;
+			await Mediator.instance.sendCommand(checkPasswordCommand);
+
 			const newSalt = generateSalt();
 			user.salt = newSalt;
-			user.passwordHash = getPasswordHash(command.password, newSalt);
+			user.passwordHash = getPasswordHash(command.newPassword, newSalt);
 		}
 
 		const newUser = await this.userRepository.save(user);

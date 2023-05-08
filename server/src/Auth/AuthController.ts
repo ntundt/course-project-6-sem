@@ -22,7 +22,7 @@ export default class AuthController {
 		let authResult = await Mediator.instance.sendCommand(command);
 
 		return {
-			authToken: jwt.sign({ ...authResult }, 'test_secret'),
+			accessToken: jwt.sign({ ...authResult }, 'test_secret'),
 			...authResult
 		}
 	}

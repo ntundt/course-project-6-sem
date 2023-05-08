@@ -11,3 +11,7 @@
 .row {
   margin: 0;
 }
+
+* {
+  scrollbar-width: thin;
+}

@@ -9,6 +9,7 @@ export default function FontAwesomeIconAsAvatar(props: any) {
 
 	return (
 		<div className='FontAwesomeIconAsAvatar'
+			onClick={props.onClick}
 			style={{
 				width: width,
 				height: height,

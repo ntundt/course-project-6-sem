@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import UserSelectionModal from '../UserSelectionModal/UserSelectionModal';
 import UserSelector from '../../Common/UserSelector';
+import { getAvatarUrl } from '../../Common/Avatar';
 
 export default function ChatMembersModal(props: any) {
 	const dispatch = useDispatch<AppDispatch>();
@@ -75,7 +76,7 @@ export default function ChatMembersModal(props: any) {
 							<UserInfo
 								key={member.id}
 								username={member.username}
-								avatar={member.avatar}
+								avatar={getAvatarUrl(member)}
 								isSelected={false}
 								name={member.name}
 								showDeleteControl={member.id === currentUserId || chat.creatorId === currentUserId}

@@ -63,6 +63,18 @@
 }
 
 .ChatEntry-message {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	width: 100%;
+	
+}
+.active .ChatEntry-message {
+	color: #eee;
+}
+
+.ChatEntry-message-text {
 	font-size: 16px;
 	color: #333;
 	white-space: nowrap;
@@ -70,8 +82,13 @@
 	text-overflow: ellipsis;
 	width: 100%;
 }
-.active .ChatEntry-message {
-	color: #eee;
+
+.ChatEntry-unread-badge {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background-color: #007bff;
+	margin-left: 0.5rem;
 }
 
 .ChatEntry-name, .ChatEntry-time, .ChatEntry-message {

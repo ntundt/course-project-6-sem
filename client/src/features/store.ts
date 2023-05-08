@@ -7,6 +7,8 @@ import { chatDisplaySlice } from './chatDisplay';
 import { reportsSlice } from './reducers/reportsSlice';
 import { chatMembersSlice } from './reducers/chatMembersSlice';
 import { chatCreationSlice } from './reducers/chatCreationSlice';
+import { settingsSlice } from './settingsSlice';
+import { authSlice } from './authSlice';
 
 const authReducer = (state = initialState.auth, action: any) => {
 	switch (action.type) {
@@ -33,12 +35,13 @@ export const store = configureStore({
 	preloadedState: initialState,
 	reducer: combineReducers({
 		chatsList: chatsListReducer,
-		auth: authReducer,
+		auth: authSlice.reducer,
 		chatDisplay: chatDisplaySlice.reducer,
 		users: usersReducer,
 		reports: reportsSlice.reducer,
 		chatMembersModal: chatMembersSlice.reducer,
 		chatCreationModal: chatCreationSlice.reducer,
+		settingsModal: settingsSlice.reducer,
 	}),
 	middleware: getDefaultMiddleware => getDefaultMiddleware({
 		serializableCheck: false,/*{

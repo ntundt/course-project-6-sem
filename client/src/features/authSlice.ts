@@ -31,6 +31,12 @@ export const authSlice = createSlice({
 			state.accessToken = null;
 			state.expiresAt = null;
 		},
+		setAuth: (state, action) => {
+			state.accessToken = action.payload.accessToken;
+			state.expiresAt = action.payload.expiresAt;
+			state.userId = action.payload.userId;
+			state.isAdmin = action.payload.isAdmin;
+		},
 	},
 	extraReducers: builder => {
 		builder.addCase(fetchToken.pending, (state, action) => {
@@ -48,3 +54,5 @@ export const authSlice = createSlice({
 		});
 	}
 });
+
+export const { logout, setAuth } = authSlice.actions;

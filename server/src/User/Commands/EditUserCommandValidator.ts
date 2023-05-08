@@ -10,8 +10,9 @@ export default class EditUserCommandValidator extends HttpValidatorBase<EditUser
 			name: z.string().min(1).max(255).optional(),
 			username: z.string().min(1).max(255).regex(/^[a-zA-Z0-9_\.]+$/).optional(),
 			// /uploads/{guid}.{ext}
-			profilePicUrl: z.string().regex(/^\/uploads\/[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}\.[a-z0-9]{3,4}$/).optional(),
-			password: z.string().min(6).max(255).optional()
+			avatar: z.string().regex(/^\/uploads\/[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}\.[a-z0-9]{3,4}$/).optional(),
+			currentPassword: z.string().min(6).max(255).optional(),
+			newPassword: z.string().min(6).max(255).optional(),
 		});
 	}
 }

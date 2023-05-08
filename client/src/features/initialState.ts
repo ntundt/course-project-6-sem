@@ -6,10 +6,9 @@ const initialState: any = {
 		error: null,
 	},
 	auth: {
-		accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2LCJpc01vZGVyYXRvciI6dHJ1ZSwiZXhwaXJlc0F0IjoyMDAwMDAwMDAwfQ._YXEmyXVA1HW-BY0V4bkiFKB6DX9rFlQEqtwC_V5Xzo',
-		expiresAt: 2000000000000,
-		userId: 16,
-		isAdmin: true,
+		accessToken: null,
+		userId: null,
+		isAdmin: null,
 		loading: false,
 		error: null,
 	},
@@ -49,6 +48,11 @@ const initialState: any = {
 		error: null,
 	},
 	chatCreationModal: {
+		show: false,
+		loading: false,
+		error: null,
+	},
+	settingsModal: {
 		show: false,
 		loading: false,
 		error: null,

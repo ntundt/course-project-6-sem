@@ -15,23 +15,21 @@ import debounce from 'lodash/debounce';
 import config from '../../config.json';
 import { showMembersModal } from '../../features/reducers/chatMembersSlice';
 
-export default function ChatDisplay() {
-	const messagesListRef = useRef<HTMLDivElement>(null);
-	
+export default function ChatDisplay() {	
 	const dispatch = useDispatch<AppDispatch>();
 
-	const currentUserId = useSelector((state: any) => state.auth.id);
-	const chat = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === state.chatsList.selectedChatId));
-	const messages = chat?.messages;
-	const avatarUrl = getAvatarUrl(chat);
-	const isPrivate = chat?.type !== 'group';
+	const chatId = useSelector((state: any) => state.chatsList.selectedChatId);
+	const chatName = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === state.chatsList.selectedChatId)?.name);
+	const isPrivate = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === state.chatsList.selectedChatId)?.type !== 'group');
+	const avatarUrl = useSelector((state: any) => getAvatarUrl(state.chatsList.chats.find((chat: any) => chat.id === state.chatsList.selectedChatId)));
+	const membersCount = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === state.chatsList.selectedChatId)?.membersCount);
 
 	const openChatMembersModal = () => {
-		dispatch(showMembersModal({ chatId: chat.id }));
+		dispatch(showMembersModal({ chatId }));
 	}
 
 	return (<>
-			<div className={['ChatDisplay col-8', chat ? '' : 'd-none'].join(' ')}>
+			<div className={['ChatDisplay col-8', chatId ? '' : 'd-none'].join(' ')}>
 				<div className="ChatDisplay-header">
 					<div className="ChatDisplay-chat-info-container">
 						<div className="ChatDisplay-avatar-container">
@@ -41,12 +39,12 @@ export default function ChatDisplay() {
 						</div>
 						<div className="ChatDisplay-chat-name-container">
 							<div className="ChatDisplay-chat-name">
-								{chat?.name}
+								{chatName}
 							</div>
 							<div className="ChatDisplay-chat-description">
 								<small>
 									{isPrivate ? 'Private chat' : 
-										<a href="#" onClick={openChatMembersModal}>{chat?.membersCount} members</a>}
+										<a href="#" onClick={openChatMembersModal}>{membersCount} member(s)</a>}
 								</small>
 							</div>
 						</div>
@@ -60,7 +58,7 @@ export default function ChatDisplay() {
 				<MessagesList />
 				<MessageEditor />
 			</div>
-			<div className={['col-8', 'ChatDisplay-not-selected-placeholder-container', chat ? 'd-none' : ''].join(' ')}>
+			<div className={['col-8', 'ChatDisplay-not-selected-placeholder-container', chatId ? 'd-none' : ''].join(' ')}>
 				<div className="badge rounded-pill bg-primary ChatDisplay-not-selected-placeholder">
 					Select a chat to start messaging
 				</div>
