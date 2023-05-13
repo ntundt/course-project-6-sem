@@ -1,27 +1,27 @@
 import { BadRequestError } from 'routing-controllers';
 import IApplicationError from '../../Common/Errors/IApplicationError';
+import ApplicationErrorBase from '../../Common/Errors/ApplicationErrorBase';
 
-export default class ChatAlreadyExistsError extends BadRequestError implements IApplicationError {
+export default class ChatAlreadyExistsError extends ApplicationErrorBase {
+  public payload: object;
+  public httpCode: number;
+  public message: string;
+  
   constructor(
     private readonly chatId: number,
   ) {
-    super('The chat already exists.');
+    super();
+    this.payload = { chatId };
+    this.httpCode = 400;
+    this.message = `Chat with id ${chatId} already exists`;
   }
 
-  public getChatId(): number {
-    return this.chatId;
-  }
 
   public toJSON(): any {
     return {
       err: 400,
       message: this.message,
-      action: {
-        type: 'chatsList/chatSelected',
-        payload: {
-          chatId: this.getChatId(),
-        },
-      }
+      payload: this.payload,
     };
   }
 }

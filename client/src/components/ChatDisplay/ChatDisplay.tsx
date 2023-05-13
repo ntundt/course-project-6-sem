@@ -12,8 +12,9 @@ import { fetchChatMessages } from '../../features/chatsListSlice';
 import { AppDispatch } from '../../features/store';
 import debounce from 'lodash/debounce';
 
-import config from '../../config.json';
 import { showMembersModal } from '../../features/reducers/chatMembersSlice';
+import { showChatSettingsModal } from '../../features/reducers/chatSettingsSlice';
+import classes from '../Common/classesString';
 
 export default function ChatDisplay() {	
 	const dispatch = useDispatch<AppDispatch>();
@@ -23,9 +24,16 @@ export default function ChatDisplay() {
 	const isPrivate = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === state.chatsList.selectedChatId)?.type !== 'group');
 	const avatarUrl = useSelector((state: any) => getAvatarUrl(state.chatsList.chats.find((chat: any) => chat.id === state.chatsList.selectedChatId)));
 	const membersCount = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === state.chatsList.selectedChatId)?.membersCount);
+	const creatorId = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === state.chatsList.selectedChatId)?.creatorId);
+
+	const currentUserId = useSelector((state: any) => state.auth.userId);
 
 	const openChatMembersModal = () => {
 		dispatch(showMembersModal({ chatId }));
+	}
+
+	const openChatSettingsModal = () => {
+		dispatch(showChatSettingsModal({ chatId }));
 	}
 
 	return (<>
@@ -50,7 +58,12 @@ export default function ChatDisplay() {
 						</div>
 					</div>
 					<div className="ChatDisplay-chat-control-button-container">
-						<button className="ChatDisplay-chat-control-button">
+						<button 
+							className={classes({
+								"ChatDisplay-chat-control-button": true,
+								'd-none': currentUserId !== creatorId,
+							})}
+							onClick={openChatSettingsModal}>
 							<FontAwesomeIcon icon={faEllipsisVertical} />
 						</button>
 					</div>

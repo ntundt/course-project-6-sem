@@ -8,7 +8,7 @@ const initialState: any = {
 	auth: {
 		accessToken: null,
 		userId: null,
-		isAdmin: null,
+		isModerator: null,
 		loading: false,
 		error: null,
 	},
@@ -56,6 +56,19 @@ const initialState: any = {
 		show: false,
 		loading: false,
 		error: null,
+	},
+	chatSettingsModal: {
+		show: false,
+		chatId: null,
+		loading: false,
+		error: null,
+	},
+	errors: {
+		errors: [],
+	},
+	notifications: {
+		active: false,
+		userEnabled: false,
 	},
 }
 

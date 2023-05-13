@@ -27,7 +27,7 @@ export class RemoveChatMemberCommandHandler extends CommandHandlerBase<RemoveCha
 			throw new HttpError(404, 'Chat not found');
 		}
 
-		if (chat.creatorId !== command.removerId) {
+		if (chat.creatorId !== command.removerId || chat.creatorId === command.userId) {
 			throw new HttpError(403, 'Only creator can remove members from chat');
 		}
 

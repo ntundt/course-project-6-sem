@@ -19,6 +19,8 @@ export default class AuthController {
 	@UseBefore(enableCors)
 	@Post('/api/auth')
 	public async getToken(@Body() command: CheckPasswordCommand) {
+		console.log(command);
+
 		let authResult = await Mediator.instance.sendCommand(command);
 
 		return {

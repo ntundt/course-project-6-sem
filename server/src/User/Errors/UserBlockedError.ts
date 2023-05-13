@@ -1,6 +1,6 @@
 import ApplicationErrorBase from '../../Common/Errors/ApplicationErrorBase';
 
-export default class UserNotFoundError extends ApplicationErrorBase {
+export default class UserBlockedError extends ApplicationErrorBase {
 	public payload: { id: number | string };
 	public httpCode: number;
 	public message: string;
@@ -8,14 +8,14 @@ export default class UserNotFoundError extends ApplicationErrorBase {
 	public constructor(id: number | string) {
 		super();
 		this.payload = { id };
-		this.httpCode = 404;
-		this.message = 'User ' + id + ' not found';
+		this.httpCode = 403;
+		this.message = 'User ' + id + ' is blocked';
 	}
 
 	public toJSON() {
 		return {
-			err: 101,
-			message: 'User ' + this.payload.id + ' not found'
+			err: 102,
+			message: 'User ' + this.payload.id + ' is blocked'
 		};
 	}
 }

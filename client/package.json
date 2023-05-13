@@ -31,11 +31,12 @@
     "redux-thunk": "^2.4.2",
     "socket.io-client": "^4.6.1",
     "typescript": "^5.0.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yet-another-react-lightbox": "^3.6.0"
   },
   "scripts": {
     "start": "set port=3001 && react-scripts start",
-    "build": "react-scripts build && copy -r build/* ../server/public",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

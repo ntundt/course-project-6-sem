@@ -1,0 +1,9 @@
+.ErrorContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	height: min-content;
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+}

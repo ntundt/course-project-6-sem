@@ -19,7 +19,7 @@ export default function ChatList() {
 	const selectedChatId = useSelector((state: any) => state.chatsList.selectedChatId);
 	const auth = useSelector((state: any) => state.auth);
 
-	const userIsAdmin = useSelector((state: any) => state.auth.isAdmin);
+	const userIsAdmin = useSelector((state: any) => state.auth.isModerator);
 
 	useEffect(() => {
 		dispatch(fetchChatList());
@@ -72,7 +72,6 @@ export default function ChatList() {
 			</div>
 			<div className='ChatList-scrollable'>
 				{chats.map((chat: any) => {
-					const lastMessage = chat.messages[chat.messages.length - 1];
 					return <ChatEntry
 						key={chat.id}
 						chatId={chat.id}

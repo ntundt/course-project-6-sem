@@ -1,9 +1,17 @@
 import { BadRequestError } from 'routing-controllers';
 import IApplicationError from '../../Common/Errors/IApplicationError';
+import ApplicationErrorBase from '../../Common/Errors/ApplicationErrorBase';
 
-export default class NotEnoughChatMembersError extends BadRequestError implements IApplicationError {
+export default class NotEnoughChatMembersError extends ApplicationErrorBase {
+  public payload: object;
+  public httpCode: number;
+  public message: string;
+  
   constructor() {
-    super('You must specify at least one member apart from yourself to create a chat.');
+    super();
+    this.payload = {};
+    this.httpCode = 400;
+    this.message = `Chat must have at least 2 members`;
   }
 
   public toJSON() {

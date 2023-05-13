@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import config from '../config.json';
 
 const initialState: any = {
 	messages: [],
@@ -7,7 +8,7 @@ const initialState: any = {
 };
 
 const fetchMessageHistory = createAsyncThunk('messages/fetch', async (chatId: number) => {
-	const response = await fetch(`http://localhost:3000/api/messages/${chatId}`);
+	const response = await fetch(`${config.server.protocol}://${config.server.host}:${config.server.port}/api/messages/${chatId}`);
 	const data = await response.json();
 	return data;
 });

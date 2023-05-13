@@ -18,7 +18,6 @@ export default function SettingsModal(props: any) {
 	const [saveData, setSaveData] = useState<any>({});
 
 	const onChange = (data: any) => {
-		console.log(data, saveData.newPassword === saveData.confirmNewPassword);
 		setCanSave(data.somethingChanged);
 		setSaveData(data);
 	};

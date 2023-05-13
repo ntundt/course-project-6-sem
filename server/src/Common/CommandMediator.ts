@@ -29,6 +29,8 @@ import { SearchUsersCommandHandler } from '../User/Commands/SearchUsersCommand';
 import { GetUserRoomsCommandHandler } from './Commands/GetUserRoomsCommand';
 import CommandHandlerBase from './CommandHandlerBase';
 import NotificataionService from './NotificationService';
+import UserService from '../User/UserService';
+import { EditChatCommandHandler } from '../Chats/Commands/EditChatCommand';
 
 
 export default class Mediator {
@@ -41,36 +43,52 @@ export default class Mediator {
 	}
 
 	private _em: EntityManager;
+	private _redis: any;
 	private _notificationService: any;
 
 	private _commandHandlers: Map<string, any>;
 	
 	public setEntityManager(entityManager: EntityManager) {
+		this._em = entityManager;
+	}
+
+	public initCommandHandlers() {
 		this._commandHandlers = new Map<string, any>();
-		this._commandHandlers.set('CreateNewMessageCommand', new CreateNewMessageCommandHandler(entityManager));
-		this._commandHandlers.set('CheckPasswordCommand', new CheckPasswordCommandHandler(entityManager));
-		this._commandHandlers.set('CreateChatCommand', new CreateChatCommandHandler(entityManager));
-		this._commandHandlers.set('GetChatListCommandHandler', new GetChatListCommandHandler(entityManager));
-		this._commandHandlers.set('CreateNewMessageCommand', new CreateNewMessageCommandHandler(entityManager));
-		this._commandHandlers.set('EnsureUserIsChatMemberCommand', new EnsureUserIsChatMemberCommandHandler(entityManager));
-		this._commandHandlers.set('GetChatMessagesCommand', new GetChatMessagesCommandHandler(entityManager));
-		this._commandHandlers.set('CreateChatCommand', new CreateChatCommandHandler(entityManager));
-		this._commandHandlers.set('GetChatListCommand', new GetChatListCommandHandler(entityManager));
-		this._commandHandlers.set('GetChatInfoCommand', new GetChatInfoCommandHandler(entityManager));
-		this._commandHandlers.set('EditMessageCommand', new EditMessageCommandHandler(entityManager));
-		this._commandHandlers.set('CreateAttachmentCommand', new CreateAttachmentCommandHandler(entityManager));
-		this._commandHandlers.set('EditUserCommand', new EditUserCommandHandler(entityManager));
-		this._commandHandlers.set('CreateUserCommand', new CreateUserCommandHandler(entityManager));
-		this._commandHandlers.set('CreateReportCommand', new CreateReportCommandHandler(entityManager));
-		this._commandHandlers.set('ProcessReportCommand', new ProcessReportCommandHandler(entityManager));
-		this._commandHandlers.set('GetReportsListCommand', new GetReportsListCommandHandler(entityManager));
-		this._commandHandlers.set('AddChatMemberCommand', new AddChatMemberCommandHandler(entityManager));
-		this._commandHandlers.set('RemoveChatMemberCommand', new RemoveChatMemberCommandHandler(entityManager));
-		this._commandHandlers.set('GetUserByIdCommand', new GetUserByIdCommandHandler(entityManager));
-		this._commandHandlers.set('MarkMessageAsReadCommand', new MarkMessageAsReadCommandHandler(entityManager));
-		this._commandHandlers.set('GetUserRoomsCommand', new GetUserRoomsCommandHandler(entityManager));
-		this._commandHandlers.set('GetChatMembersCommand', new GetChatMembersCommandHandler(entityManager));
-		this._commandHandlers.set('SearchUsersCommand', new SearchUsersCommandHandler(entityManager));
+		const handlers = [
+			{ name: 'CreateNewMessageCommand', handler: CreateNewMessageCommandHandler },
+			{ name: 'CheckPasswordCommand', handler: CheckPasswordCommandHandler },
+			{ name: 'CreateChatCommand', handler: CreateChatCommandHandler },
+			{ name: 'GetChatListCommandHandler', handler: GetChatListCommandHandler },
+			{ name: 'CreateNewMessageCommand', handler: CreateNewMessageCommandHandler },
+			{ name: 'EnsureUserIsChatMemberCommand', handler: EnsureUserIsChatMemberCommandHandler },
+			{ name: 'GetChatMessagesCommand', handler: GetChatMessagesCommandHandler },
+			{ name: 'CreateChatCommand', handler: CreateChatCommandHandler },
+			{ name: 'GetChatListCommand', handler: GetChatListCommandHandler },
+			{ name: 'GetChatInfoCommand', handler: GetChatInfoCommandHandler },
+			{ name: 'EditMessageCommand', handler: EditMessageCommandHandler },
+			{ name: 'CreateAttachmentCommand', handler: CreateAttachmentCommandHandler },
+			{ name: 'EditUserCommand', handler: EditUserCommandHandler },
+			{ name: 'CreateUserCommand', handler: CreateUserCommandHandler },
+			{ name: 'CreateReportCommand', handler: CreateReportCommandHandler },
+			{ name: 'ProcessReportCommand', handler: ProcessReportCommandHandler },
+			{ name: 'GetReportsListCommand', handler: GetReportsListCommandHandler },
+			{ name: 'AddChatMemberCommand', handler: AddChatMemberCommandHandler },
+			{ name: 'RemoveChatMemberCommand', handler: RemoveChatMemberCommandHandler },
+			{ name: 'GetUserByIdCommand', handler: GetUserByIdCommandHandler },
+			{ name: 'MarkMessageAsReadCommand', handler: MarkMessageAsReadCommandHandler },
+			{ name: 'GetUserRoomsCommand', handler: GetUserRoomsCommandHandler },
+			{ name: 'GetChatMembersCommand', handler: GetChatMembersCommandHandler },
+			{ name: 'SearchUsersCommand', handler: SearchUsersCommandHandler },
+			{ name: 'EditChatCommand', handler: EditChatCommandHandler },
+		];
+		handlers.forEach(handler => {
+			this._commandHandlers.set(handler.name, new handler.handler(this._em));
+			this._commandHandlers.get(handler.name).setUserService(this.getUserService());
+		});
+	}
+
+	public getEntityManager(): EntityManager {
+		return this._em;
 	}
 
 	public setNotificationService(notificationService: NotificataionService) {
@@ -81,12 +99,24 @@ export default class Mediator {
 		return this._notificationService;
 	}
 
+	public setRedis(redis: any) {
+		this._redis = redis;
+	}
+
+	public getRedis(): any {
+		return this._redis;
+	}
+
+	public getUserService() {
+		return new UserService(this._redis);
+	}
+
 	public registerHandler(handler: CommandHandlerBase<any, any>) {
 		this._commandHandlers.set(handler.constructor.name, handler);
 	}
 
 	public async sendCommand(command: any): Promise<any> {
-		console.log(command.constructor.name)
+		console.log(command)
 		let handler = this._commandHandlers.get(command.constructor.name);
 		return (await handler.handle(command));
 	}

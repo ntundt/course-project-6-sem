@@ -32,10 +32,10 @@ export class ChatDto {
 		this.name = chat.name;
 		this.avatar = chat.avatar;
 		this.createdAt = chat.createdAt;
-		this.messages = chat.messages?.map(message => new MessageDto(message));
+		this.messages = chat.messages?.map(message => new MessageDto(message)) ?? [];
 		if (!chat.isPrivate) this.creatorId = chat.creatorId;
-		this.membersCount = chat.members.length;
-		this.unreadCount = unreadCount;
+		this.membersCount = chat.members.length ?? 0;
+		this.unreadCount = unreadCount ?? 0;
 	}
 
 }

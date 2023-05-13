@@ -43,6 +43,7 @@ export class ProcessReportCommandHandler extends CommandHandlerBase<ProcessRepor
 			report.user.blockedTo = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
 			report.user.blockedReason = command.reason ?? report.reason;
 			report.user.blockedById = command.resolverId;
+			await this._userService.blockUser(report.user.id);
 		}
 
 		await this._em.save(report);

@@ -23,7 +23,7 @@ export default function Avatar(props: any) {
 					return <FontAwesomeIconAsAvatar
 						width={props.small ? 36 : 54}
 						height={props.small ? 36 : 54}
-						icon={props.isPrivate ? faUserGroup : faUser} />;
+						icon={props.isPrivate ? faUser : faUserGroup} />;
 				}
 				return (
 					<img className={[

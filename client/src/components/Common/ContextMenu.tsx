@@ -13,8 +13,6 @@ export default function ContextMenu(props: {
 		return null;
 	}
 
-	console.log('should show context menu');
-
 	return (
 		<div className={classes({
 			'dropdown-menu': true,

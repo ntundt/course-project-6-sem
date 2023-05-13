@@ -3,18 +3,23 @@ import './SettingsModalContent.css';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../../features/store';
-import { Form, InputGroup, Modal } from 'react-bootstrap';
+import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
 
 import { axios } from '../../../features/apiCalls';
 import FontAwesomeIconAsAvatar from '../../Common/FontAwesomeIconAsAvatar';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { getAvatarUrl } from '../../Common/Avatar';
 import classes from '../../Common/classesString';
+import { userDisabledNotifications, userEnabledNotifications } from '../../../features/notificationsSlice';
 
 export default function SettingsModalContent(props: any) {
 	const dispatch = useDispatch<AppDispatch>();
 
 	const dummyAvatarInputRef = useRef<HTMLInputElement>(null);
+
+	const notificationsActive = useSelector((state: any) => state.notifications.userEnabled);
+	const toggleNotificationsActive = () => notificationsActive ?
+		dispatch(userDisabledNotifications()) : dispatch(userEnabledNotifications());
 
 	const [selectedPage, setSelectedPage] = useState(0);
 	const [usernameAvailable, setUsernameAvailable] = useState(false);
@@ -188,6 +193,14 @@ export default function SettingsModalContent(props: any) {
 								</InputGroup>
 
 							</div>
+
+							<h4>Browser notifications</h4>
+
+							<Button
+								onClick={toggleNotificationsActive}
+								>
+								{notificationsActive ? 'Disable' : 'Enable'}
+							</Button>
 
 							<h4>Actions</h4>
 

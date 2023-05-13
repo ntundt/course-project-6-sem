@@ -3,6 +3,7 @@ import './LogIn.css';
 import { useState } from 'react';
 import { Button, Card, Form } from 'react-bootstrap';
 import { axios } from '../../features/apiCalls';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 export default function LogIn(props: any) {
 	const [username, setUsername] = useState('');
@@ -17,6 +18,8 @@ export default function LogIn(props: any) {
 			window.location.reload();
 		});
 	};
+
+	useHotkeys('enter', logIn, { enableOnFormTags: true });
 
 	return (
 		<Card className='mb-3'>
@@ -41,7 +44,7 @@ export default function LogIn(props: any) {
 							placeholder='Password' />
 					</Form.Group>
 					
-					<Button variant='primary' type='submit' disabled={
+					<Button variant='primary' disabled={
 							username === '' || password === '' || password.length < 6
 						}
 						onClick={logIn}

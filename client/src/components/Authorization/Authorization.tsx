@@ -10,7 +10,7 @@ export default function Authorization(props: any) {
 
 	return (
 		<Container className='d-flex justify-content-center align-items-center' style={{height: '100vh'}}>
-			<div className='col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3'>
+			<div className='col-12 col-sm-10 col-md-8 col-lg-5 col-xl-5' style={{maxWidth: 375}}>
 				{page === 0 && (
 					<LogIn />
 				)}

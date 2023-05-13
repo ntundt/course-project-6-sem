@@ -35,7 +35,7 @@ export const authSlice = createSlice({
 			state.accessToken = action.payload.accessToken;
 			state.expiresAt = action.payload.expiresAt;
 			state.userId = action.payload.userId;
-			state.isAdmin = action.payload.isAdmin;
+			state.isModerator = action.payload.isModerator;
 		},
 	},
 	extraReducers: builder => {

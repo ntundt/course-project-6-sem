@@ -17,7 +17,6 @@ export default function ReportsViewModal(props: any) {
 	useEffect(() => {
 		if (!show) return;
 		axios.get('/reports').then((response: any) => {
-			console.log(response.data);
 			setReports(response.data);
 		});
 	}, [show]);

@@ -65,11 +65,13 @@ export default function ChatMembersModal(props: any) {
 				</Modal.Header>
 				<Modal.Body>
 					<div className='ChatMembersModal-header'>
-						<button className='ChatMembersModal-add-member-button'
-							onClick={onAddMember}>
-							<FontAwesomeIcon icon={faPlus} />
-							Add member
-						</button>
+						{ chat?.creatorId === currentUserId && ( 
+							<button className='ChatMembersModal-add-member-button'
+								onClick={onAddMember}>
+								<FontAwesomeIcon icon={faPlus} />
+								Add member
+							</button>
+						)}
 					</div>
 					<div className='ChatMembersModal-users-list'>
 						{members.map((member: any) => ( props.excludedUserIds?.includes(member.id) ? null :

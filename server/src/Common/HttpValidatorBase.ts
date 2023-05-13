@@ -10,10 +10,10 @@ export default class HttpValidatorBase<T> {
 	}
 
 	public validateAndThrow(obj: T): void {
-		try {
+		/*try {*/
 			this._schema.parse(obj);
-		} catch (error) {
+		/*} catch (error) {
 			throw new BadRequestError(error.errors);
-		}
+		}*/
 	}
 }

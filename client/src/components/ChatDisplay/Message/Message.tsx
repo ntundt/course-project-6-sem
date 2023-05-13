@@ -3,7 +3,6 @@ import './Message.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { PhotoAlbum } from 'react-photo-album';
 
-import config from '../../../config.json';
 import Avatar, { getAvatarUrl } from '../../Common/Avatar';
 import { fetchUser } from '../../../features/usersSlice';
 import { AppDispatch } from '../../../features/store';
@@ -14,6 +13,12 @@ import TimeDisplay from '../../TimeDisplay/TimeDisplay';
 import DeliveryStatusIcon from './DeliveryStatusIcon/DeliveryStatusIcon';
 import useOnScreen from '../../Common/useOnScreen';
 import ContextMenu from '../../Common/ContextMenu';
+import Lightbox from 'yet-another-react-lightbox';
+import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
+import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import 'yet-another-react-lightbox/plugins/thumbnails.css';
+import 'yet-another-react-lightbox/styles.css';
 
 export default function Message(props: any) {
 	const dispatch = useDispatch<AppDispatch>();
@@ -32,6 +37,8 @@ export default function Message(props: any) {
 	const text = message?.text;
 
 	const avatarUrl = getAvatarUrl(sender);
+
+	const [lightBoxIndex, setLightBoxIndex] = useState(-1);
 
 	const onScreen = useOnScreen(messageRef);
 	useEffect(() => {
@@ -93,20 +100,6 @@ export default function Message(props: any) {
 			}
 		});
 	}
-	if (isOwnMessage) {
-		contextMenuItems.push({
-			text: 'Delete',
-			onClick: () => {
-				dispatch({
-					type: 'messages/deleteMessage',
-					payload: {
-						messageId: message.id,
-						chatId: message.chatId,
-					}
-				});
-			}
-		});
-	}
 
 	return (
 		<div 
@@ -117,6 +110,18 @@ export default function Message(props: any) {
 				'Message-container-own': isOwnMessage,
 			})}
 		>
+			<Lightbox
+				slides={attachments?.filter((attachment: any) => attachment.type === 'Image' || attachment.type === 'Video' ||  attachment.type === 'Animation').map((attachment: any) => ({
+					src: attachment.url,
+					width: attachment.width,
+					height: attachment.height,
+				})) ?? []}
+				open={lightBoxIndex > -1}
+				close={() => setLightBoxIndex(-1)}
+				index={lightBoxIndex}
+				plugins={[ Fullscreen, Thumbnails, Zoom ]}
+			/>
+
 
 			<ContextMenu
 				show={showContextMenu.show}
@@ -159,7 +164,10 @@ export default function Message(props: any) {
 									width: attachment.width,
 									height: attachment.height,
 								}))}
-							renderPhoto={({ photo: { src }, layout: { width, height } }) => {
+							onClick={({ index }) => {
+								setLightBoxIndex(index);
+							}}
+							renderPhoto={({ photo: { src }, layout: { width, height }, imageProps }) => {
 								const videoExtensions = ['mp4', 'webm', 'ogg'];
 								const type = src.split('.').pop() ?? '';
 								if (videoExtensions.includes(type)) {
@@ -177,7 +185,7 @@ export default function Message(props: any) {
 								} else if (type === 'gif') {
 									return (
 										<img
-											src={src}
+											{...imageProps}
 											width={Math.round(width)}
 											height={Math.round(height)}
 											style={{ objectFit: "cover" }}
@@ -190,12 +198,12 @@ export default function Message(props: any) {
 				}
 				<div className='Message-text'>{text}</div>
 				<div className='Message-sound-and-docs-attachments'>
-					{attachments?.filter((attachment: any) => attachment.type === 'audio' || attachment.type === 'document')
+					{attachments?.filter((attachment: any) => attachment.type === 'Audio' || attachment.type === 'Document')
 						.map((attachment: any) => {
 							return (
 								<div className='Message-sound-and-docs-attachment-container'>
-									{attachment.type === 'audio' && <audio className='Message-sound-and-docs-attachment' src={attachment.url} controls></audio>}
-									{attachment.type === 'document' && <a className='Message-sound-and-docs-attachment' href={attachment.url} download>{attachment.name}</a>}
+									{attachment.type === 'Audio' && <audio className='Message-sound-and-docs-attachment' src={attachment.url} controls></audio>}
+									{attachment.type === 'Document' && <a className='Message-sound-and-docs-attachment' href={attachment.url} download>{attachment.name}</a>}
 								</div>
 							);
 						})}

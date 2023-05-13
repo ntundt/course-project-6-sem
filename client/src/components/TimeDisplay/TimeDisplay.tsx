@@ -8,8 +8,6 @@ export default function TimeDisplay(props: any) {
 		time = new Date(props.time);
 	}
 
-	console.log('UPDATE', new Date().toUTCString());
-
 	let momentTime = moment.utc(time).local();
 	
 	const [displayTime, setDisplayTime] = useState(props.format ? momentTime.format(props.format) : momentTime.fromNow());

@@ -18,16 +18,20 @@ import AttachmentsController from './Attachments/AttachmentsController';
 import UsersController from './User/UsersController';
 import { Report } from './Reports/Report';
 import ReportsController from './Reports/ReportsController';
-import { createServer } from 'http';
+import { createServer as createHttpsServer } from 'https';
+import { createServer as createHttpServer } from 'http';
 import { Server } from 'socket.io';
 import * as jwt from 'jsonwebtoken';
 import TokenPayload from './Auth/TokenPayload';
 import NotificationService from './Common/NotificationService';
 import { GetUserRoomsCommand, GetUserRoomsCommandResult } from './Common/Commands/GetUserRoomsCommand';
-//utc
+import { ErrorHandlerMiddleware } from './Common/ErrorHandlerMiddleware';
+import { createClient } from 'redis';
+
+console.log('Server started');
+
 process.env.TZ = 'Europe/Minsk';
 console.log('Timezone used ', process.env.TZ);
-
 
 const app: express.Application = createExpressServer({
 	controllers: [
@@ -39,12 +43,12 @@ const app: express.Application = createExpressServer({
 		ReportsController,
 	],
 	cors: {
-		origin: 'http://localhost:3001',
+		origin: `${config.client.protocol}://${config.client.host}:${config.client.port}`,
 		credentials: true,
 	},
 	authorizationChecker: (action: Action, roles: string[]) => new Promise<boolean>((resolve, reject) => {
 		try {
-			action.response.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
+			action.response.setHeader('Access-Control-Allow-Origin', `${config.client.protocol}://${config.client.host}:${config.client.port}`);
 			action.response.setHeader('Access-Control-Allow-Headers', 'Authorization');
 			action.response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 			action.response.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -60,69 +64,63 @@ const app: express.Application = createExpressServer({
 			if (!user) {
 				return resolve(false);
 			}
-			action.request.user = user;
-			return resolve(true);
+
+			Mediator.instance.getUserService().throwIfBlocked(user.userId).then(() => {
+				action.request.user = user;
+				resolve(true);
+			}).catch(() => {
+				resolve(false);
+			});
 		})(action.request, action.response, action.next)
 	}),
 	currentUserChecker: (action: Action) => action.request.user,
-	middlewares: [(req, res, next) => {
-		next();
-	}]
+	middlewares: [
+		ErrorHandlerMiddleware,
+	],
+	defaultErrorHandler: false,
 });
 
-passport.use(Strategy);
-
-(async function main() {
-	const data = new DataSource({
-		type: 'mysql',
-		timezone: 'UTC',
-		...config.typeorm,
-		entities: [
-			User,
-			Chat,
-			Message,
-			Attachment,
-			Report,
-		],
-	});
-	await data.initialize();
-	console.log('Database connected');
-	Mediator.instance.setEntityManager(data.createEntityManager());
-	app.use('/' + config.server.upload_url, express.static(config.server.upload_dir));
-})();
 
 app.all('*', (req, res, next) => {
 	try {
-		res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
+		res.setHeader('Access-Control-Allow-Origin', `${config.client.protocol}://${config.client.host}:${config.client.port}`);
 		res.setHeader('Access-Control-Allow-Headers', 'Authorization');
 		res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 		res.setHeader('Access-Control-Allow-Credentials', 'true');
 	} catch (e) { }
 	
 	next();
-
+	
 	if (res.statusCode === 404) {
 		res.send('Custom error message');
 	}
 });
 
-console.log('Server started');
+passport.use(Strategy);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use('/' + config.server.upload_url, express.static(config.server.upload_dir));
 
-const httpServer = createServer(app);
+let httpServer;
+if (config.server.protocol === 'https') {
+	httpServer = createHttpsServer({
+		key: await fs.readFile('../../key.pem'),
+		cert: await fs.readFile('../../cert.pem'),
+	}, app);
+} else {
+	httpServer = createHttpServer(app);
+}
+
 const io = new Server(httpServer, {
 	cors: {
-		origin: 'http://localhost:3001',
+		origin: `${config.client.protocol}://${config.client.host}:${config.client.port}`,
 		credentials: true,
 	},
 });
 
 const notificationService = new NotificationService(io);
-Mediator.instance.setNotificationService(notificationService);
-
 io.on('connection', async (socket) => {
 	const token = socket.handshake.auth.token;
 
@@ -153,4 +151,35 @@ io.on('connection', async (socket) => {
 });
 
 
-httpServer.listen(3000);
+(async function main() {
+	const data = new DataSource({
+		type: 'mysql',
+		timezone: 'UTC',
+		...config.typeorm,
+		entities: [
+			User,
+			Chat,
+			Message,
+			Attachment,
+			Report,
+		],
+	});
+	await data.initialize();
+	console.log('Database connected');
+
+	const redis = createClient({
+		url: config.redis.url,
+		password: config.redis.password,
+	});
+	await redis.connect();
+	console.log('Redis connected');
+
+	Mediator.instance.setRedis(redis);
+	Mediator.instance.setNotificationService(notificationService);
+	Mediator.instance.setEntityManager(data.createEntityManager());
+	Mediator.instance.initCommandHandlers();
+	
+	httpServer.listen(config.server.port);
+	console.log(`Server listening port ${config.server.port}`);
+})();
+

@@ -29,6 +29,23 @@ const chatUpdated = (state: any, action: any) => {
 	return newState;
 };
 
+const chatEdited = (state: any, action: any) => {
+	const newState = {
+		...state,
+		chats: state.chats.map((chat: any) => {
+			if (chat.id === action.payload.id) {
+				return {
+					...chat,
+					name: action.payload.name,
+					avatar: action.payload.avatar,
+				};
+			}
+			return chat;
+		}),
+	};
+	return newState;
+};
+
 const fetchPending = (state: any, action: any) => {
 	const newState = {
 		...state,
@@ -141,7 +158,7 @@ const messageEditorTextChanged = (state: any, action: any) => {
 const messageReceived = (state: any, action: any) => {
 	const newState = {
 		...state,
-		chats: state.chats.map((chat: any) => {
+		chats: [...state.chats.map((chat: any) => {
 			if (chat.id === action.payload.chatId) {
 				return {
 					...chat,
@@ -149,7 +166,10 @@ const messageReceived = (state: any, action: any) => {
 				};
 			}
 			return chat;
-		}),
+		})]
+		.sort((a: any, b: any) => {
+			return new Date(b?.messages?.[0]?.date ?? b?.createdAt).getTime() - new Date(a?.messages?.[0]?.date ?? a?.createdAt).getTime()
+		})
 	};
 	return newState;
 }
@@ -271,6 +291,8 @@ export default function chatsListReducer(state = initialState.chatsList, action:
 			return chatAdded(state, action);
 		case 'chatsList/chatUpdated':
 			return chatUpdated(state, action);
+		case 'chatsList/chatEdited':
+			return chatEdited(state, action);
 		case 'chatsList/fetch/pending':
 			return fetchPending(state, action);
 		case 'chatsList/fetch/fulfilled':

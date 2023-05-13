@@ -8,7 +8,6 @@ import TimeDisplay from '../../TimeDisplay/TimeDisplay';
 import { chatSelected } from '../../../features/chatsListSlice';
 import Avatar, { getAvatarUrl } from '../../Common/Avatar';
 
-import config from '../../../config.json';
 import { AppDispatch } from '../../../features/store';
 
 export default function ChatEntry(props: any) {
@@ -16,16 +15,14 @@ export default function ChatEntry(props: any) {
 
 	const chat = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId));
 	const chatName = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.name);
-	const lastMessageText = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.messages[0]?.text);
-	const lastMessageTime = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.messages[0]?.date);
+	const lastMessageText = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.messages?.[0]?.text);
+	const lastMessageTime = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.messages?.[0]?.date);
 	const chatCreatedAt = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.createdAt);
 	const avatarUrl = useSelector((state: any) => getAvatarUrl(state.chatsList.chats.find((chat: any) => chat.id === props.chatId)));
-	const isPrivate = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.type !== 'group');
+	const isPrivate = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.type === 'private');
 	const isSelected = useSelector((state: any) => state.chatsList.selectedChatId === props.chatId);
-	const read = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.messages[0]?.read);
+	const read = useSelector((state: any) => state.chatsList.chats.find((chat: any) => chat.id === props.chatId)?.messages?.[0]?.read);
 	const chatTime = lastMessageTime ?? chatCreatedAt;
-	
-	console.log('chatTime', chatTime);
 
 	const selectChat = () => {
 		dispatch(chatSelected(props.chatId));

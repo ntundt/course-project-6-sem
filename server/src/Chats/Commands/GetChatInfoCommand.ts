@@ -1,6 +1,7 @@
 import { EntityManager } from 'typeorm';
 import CommandHandlerBase from '../../Common/CommandHandlerBase';
 import { Chat } from '../Chat';
+import { HttpError } from 'routing-controllers';
 
 export class GetChatInfoCommand {
 	public chatId: number;
@@ -9,7 +10,7 @@ export class GetChatInfoCommand {
 export class GetChatInfoCommandResult {
 	public chatId: number;
 	public chatName: string;
-	public chatMembers: number[];
+	public chatAvatar: string;
 	public isPrivate: boolean;
 }
 
@@ -26,14 +27,14 @@ export class GetChatInfoCommandHandler extends CommandHandlerBase<GetChatInfoCom
 		});
 
 		if (!chat) {
-			throw new Error('Chat not found');
+			throw new HttpError(404, 'Chat not found');
 		}
 
 		let result = new GetChatInfoCommandResult;
 
 		result.chatId = chat.id;
 		result.chatName = chat.name;
-		result.chatMembers = chat.members.map(member => member.id);
+		result.chatAvatar = chat.avatar;
 		result.isPrivate = chat.isPrivate;
 
 		return result;

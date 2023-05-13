@@ -15,6 +15,11 @@ import ChatMembersModal from './components/Modals/ChatMembersModal/ChatMembersMo
 import ChatCreationModal from './components/Modals/ChatCreationModal/ChatCreationModal';
 import SettingsModal from './components/Modals/SettingsModal/SettingsModal';
 import Autorization from './components/Authorization/Authorization';
+import ErrorContainer from './components/Common/ErrorContainer';
+import { disableNotifications, enableNotifications } from './features/notificationsSlice';
+import NotificationDeliverer from './components/Notifications/NotificationDeliverer';
+import config from './config.json';
+import ChatSettingsModal from './components/Modals/ChatSettingsModal/ChatSettingsModal';
 
 function App() {
 	const dispatch = useDispatch<AppDispatch>();
@@ -23,7 +28,7 @@ function App() {
 	const accessToken = useSelector((state: any) => state.auth.accessToken);
 
 	useEffect(() => {
-		const newSocket = io('http://localhost:3000', {
+		const newSocket = io(`${config.server.protocol}://${config.server.host}:${config.server.port}`, {
 			auth: {
 				token: accessToken
 			}
@@ -33,6 +38,7 @@ function App() {
 		newSocket.connect();
 
 		newSocket.on('notification', (data: any) => {
+			console.log('dispatching', data);
 			dispatch(data);
 		});
 
@@ -49,6 +55,21 @@ function App() {
 		}
 	}, []);
 
+	useEffect(() => {
+		window.onfocus = () => {
+			dispatch(disableNotifications());
+		};
+
+		window.onblur = () => {
+			dispatch(enableNotifications());
+		};
+
+		return () => {
+			window.onfocus = null;
+			window.onblur = null;
+		};
+	}, []);
+
 	return (
 		<>
 			{ accessToken && <>
@@ -63,6 +84,9 @@ function App() {
 				<ChatMembersModal />
 				<ChatCreationModal />
 				<SettingsModal />
+				<ErrorContainer />
+				<ChatSettingsModal />
+				<NotificationDeliverer notificationSource={socket} />
 			</>}
 
 			{ !accessToken &&

@@ -33,13 +33,19 @@ export class CheckPasswordCommandHandler extends CommandHandlerBase<CheckPasswor
 		}
 
 		const expectedHash = crypto.createHash('sha256').update(command.password + user.salt).digest('hex');
+		
+		console.log(expectedHash, user.passwordHash);
+
 		if (expectedHash !== user.passwordHash) {
-			throw new WrongPasswordError();
+			const err = new WrongPasswordError();
+			console.log(err.toString());
+			console.log(Object.getOwnPropertyNames(err).filter(item => typeof err[item] === 'function'));
+			throw err;
 		}
 
 		const commandResult = new CheckPasswordCommandResult();
 		commandResult.userId = user.id;
-		commandResult.isModerator = false;
+		commandResult.isModerator = user.isAdmin;
 		commandResult.expiresAt = Math.floor(new Date().getTime() / 1000) + 3600;
 
 		return commandResult;

@@ -1,7 +1,8 @@
 import ax from 'axios';
+import config from '../config.json';
 
 const axios = ax.create({
-	baseURL: 'http://localhost:3000/api',
+	baseURL: `${config.server.protocol}://${config.server.host}:${config.server.port}/api`,
 	headers: {
 		'Content-Type': 'application/json',
 	},
@@ -56,7 +57,6 @@ const fetchMessageHistory = (chatId: number, offset: number, count: number) => {
 	return async (dispatch: any, getState: any) => {
 		try {
 			if (getState().chatsList.chats.find((chat: any) => chat.id === chatId)?.loading) {
-				console.log(' already loading');
 				return;
 			}
 			dispatch({
@@ -165,7 +165,6 @@ const uploadAttachments = (chatId: number, files: File[]) => {
 				type: 'chatsList/attachmentsUpload/fulfilled',
 			});
 		} catch (error) {
-			console.log(error);
 			dispatch({
 				chatId,
 				type: 'chatsList/attachmentsUpload/rejected',

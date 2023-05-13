@@ -16,11 +16,11 @@ import CreateNewMesssageCommandValidator from './Commands/CreateNewMessageComman
 
 // TODO: Create a trigger that makes sure that a user is in fact a chat member, before allowing it to send message into the chat
 
-@Authorized()
 @JsonController()
 export default class MessageController {
 
 	@UseBefore(enableCors)
+	@Authorized()
 	@Get('/api/chats/:chatId/messages')
 	@Header('Cache-Control', 'none')
 	public async getGroupChatMessages(
@@ -40,6 +40,7 @@ export default class MessageController {
 	}
 
 	@UseBefore(enableCors)
+	@Authorized()
 	@Post('/api/chats/:chatId/messages')
 	public async sendMessage(
 		@Param('chatId') chatId: number,
@@ -65,6 +66,7 @@ export default class MessageController {
 	}
 
 	@UseBefore(enableCors)
+	@Authorized()
 	@Post('/api/chats/:chatId/messages/:messageId/read')
 	public async markMessageAsRead(
 		@Param('chatId') chatId: number,
@@ -91,6 +93,7 @@ export default class MessageController {
 	}
 
 	@UseBefore(enableCors)
+	@Authorized()
 	@Put('/api/chats/:chatId/messages/:messageId')
 	public async editMessage(
 		@Param('chatId') chatId: number,
@@ -106,6 +109,7 @@ export default class MessageController {
 	}
 
 	@UseBefore(enableCors)
+	@Authorized()
 	@Get('/api/chats/:chatId/members')
 	public async getChatMembers(
 		@Param('chatId') chatId: number,
@@ -120,6 +124,7 @@ export default class MessageController {
 
 
 	@UseBefore(enableCors)
+	@Authorized()
 	@Post('/api/chats/:chatId/members/:userId')
 	public async addMemberToChat(
 		@Param('chatId') chatId: number,
@@ -138,6 +143,7 @@ export default class MessageController {
 	}
 
 	@UseBefore(enableCors)
+	@Authorized()
 	@Delete('/api/chats/:chatId/members/:userId')
 	public async removeMemberFromChat(
 		@Param('chatId') chatId: number,

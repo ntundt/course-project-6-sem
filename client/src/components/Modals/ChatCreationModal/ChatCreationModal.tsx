@@ -21,14 +21,6 @@ export default function ChatCreationModal() {
 
 	const currentUserId = useSelector((state: any) => state.auth.userId);
 
-	const createChat = () => {
-		console.log('createChat')
-		console.log('chatName: ', chatName)
-		console.log('isPrivate: ', isPrivate)
-		console.log('selectedUsers: ', selectedUsers)
-
-	};
-
 	const onHide = () => {
 		dispatch(hideCreationModal({}));
 	};
