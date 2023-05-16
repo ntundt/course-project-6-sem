@@ -71,7 +71,7 @@ export default function ChatSettingsModal(props: any) {
 	return (
 		<Modal show={show} onHide={onHide} centered>
 			<Modal.Header>
-				<Modal.Title>Modal heading</Modal.Title>
+				<Modal.Title>Chat settings</Modal.Title>
 				<button
 					type='button'
 					className='close'

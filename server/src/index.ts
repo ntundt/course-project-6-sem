@@ -65,6 +65,8 @@ const app: express.Application = createExpressServer({
 				return resolve(false);
 			}
 
+			console.log('testing user ', user.userId);
+
 			Mediator.instance.getUserService().throwIfBlocked(user.userId).then(() => {
 				action.request.user = user;
 				resolve(true);

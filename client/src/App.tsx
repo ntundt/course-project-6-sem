@@ -84,13 +84,14 @@ function App() {
 				<ChatMembersModal />
 				<ChatCreationModal />
 				<SettingsModal />
-				<ErrorContainer />
 				<ChatSettingsModal />
 				<NotificationDeliverer notificationSource={socket} />
 			</>}
 
 			{ !accessToken &&
 				<Autorization />}
+
+			<ErrorContainer />
 		</>
 	);
 }

@@ -9,6 +9,7 @@ export default class UserService {
 
 	public async isUserBlocked(userId: number): Promise<boolean> {
 		const blockedUntil = await this.redis.get(`user:${userId}:blockedUntil`);
+		console.log('blocked until: ', blockedUntil);
 		if (blockedUntil) {
 			return Date.now() < parseInt(blockedUntil);
 		}
@@ -16,6 +17,7 @@ export default class UserService {
 	}
 
 	public async throwIfBlocked(userId: number): Promise<void> {
+		console.log('throw if blocked: ', userId);
 		if (await this.isUserBlocked(userId)) {
 			throw new UserBlockedError(userId);
 		}
